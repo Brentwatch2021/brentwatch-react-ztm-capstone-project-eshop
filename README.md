@@ -31,3 +31,56 @@ git checkout lesson-15
 git checkout -b my-main-branch
 ```
 3. Now you can just code on this branch, push code from this branch up to your forked repo etc. The main thing to remember is that you want to be on this branch for your own code, so remember what you named this branch!
+
+
+
+
+# Notes
+
+- Package-lock.json locks any specific library or package to the specific project to prevent version     clashes
+-  SCSS allows you to follow an heirarchy for developing css and it compiles to normal css for the browser.
+
+## Routing 
+- Upgrading React Router V5 to V6 will result in breaking changes Here is the tutorial for upgrading:    https://reactrouter.com/en/main/upgrading/v5
+- Great tutorial from React Router that will expose me to Vite: https://reactrouter.com/en/main/start/tutorial
+
+- Fragment from react is used as a container for elements that require a parent but it does NOT render <Fragment>
+
+- In react you are able to import an SVG and cast it as an Component and consume it as a Component
+
+- box-sizing: border-box; accounts for total width and whatever the width is set it will auto the padding to fit within and the border IE if width is 90 and padding is 20 total width will be 90 NOT 110
+
+- Outlet is used to display child content via the routes and any route within
+
+
+```
+
+<Routes>
+      <Route path="/" element={<NavigationBar/>}>
+        <Route index element={<Home/>}/>
+        <Route path="shop" element={<Shop/>}/>
+      </Route>
+</Routes>
+
+// And in the Navigation Bar Component you can use the Outlet
+
+<Fragment>
+            <div className='navigation'>
+                <Link className='logo-container' to='/'>
+                    <CrwnLogo/>
+                </Link>
+                <div className='nav-links-container'>
+                    <Link className='nav-link' to='/shop'>
+                        SHOP
+                    </Link>
+                </div>
+            </div>
+        <Outlet/>
+    </Fragment>
+
+// Now if you navigate to / The Navigation Bar it will display all child content below the bar
+
+// The Link is gets rendered into a normal anchor tag so in CSS or SCSS you can refer to it as a 
+
+
+```
