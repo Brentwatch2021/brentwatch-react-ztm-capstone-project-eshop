@@ -84,3 +84,89 @@ git checkout -b my-main-branch
 
 
 ```
+
+
+## Firebase
+
+- It's possible you may encounter a google Authorization error that says 403:restricted_client. If you do, here are the instructions to fix it!
+
+There should be a Learn More link in the popup, clicking that should take you to the Google APIs console that has three tabs under the header named Credentials, OAuth Consent Screen, and Domain Verification. Go to the OAuth Consent Screen tab and update the Application Name to "crwn-clothing" or any other name you're comfortable with (i.e. the name of your project). Click on save at the bottom, then try logging into your verified Google account thereafter.
+
+- firebase/app Captures everything required to get firebase going like the initializeApp function
+
+### Instructions Add Web app to Firebase Project
+
+- Make sure firebase npm is installed 
+
+```
+
+npm install firebase
+
+```
+
+
+- Navigate to project click on the </> icon to add the web app
+
+- Give the web app an nickname and click 
+Register
+
+- Copy over the config will look like something below
+
+```
+
+const firebaseConfig = {
+    // apparently firebase needs this api key so its fine to be public per firebase documention
+  apiKey: "something",
+  // This is the Database instance name below
+  authDomain: "something",
+  projectId: "something",
+
+  storageBucket: "something",
+  messagingSenderId: "9999",
+  appId: "1:something"
+};
+
+
+```
+
+- In order to make use of the firebase CRUD functions and others you will need to initialize:
+
+
+```
+
+const firebaseApp = initializeApp(firebaseConfig);
+
+
+```
+
+- For Authentication with an firebase project you will need to use the 'firebase/auth' module
+
+
+- You can have multiple authentication providers google,facebook, instagram etc
+
+```
+
+const provider = new GoogleAuthProvider();
+
+
+```
+
+ - The above allows for the user to sign in with google account.
+
+ - In order to allow the firebase project to be authenticated with a Google account you will need to add the provider to the firebase project
+
+ - Head to the firebase project and click Authentication 
+
+ - Click Get Started Button at the top
+
+ - Click Sign in Method choose the additional provider you would like to add in my case its Google
+
+- Click the Enable on the provider and select the project support email this email will recieve all the support emails
+
+-Click Save
+
+
+
+
+
+
