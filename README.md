@@ -163,7 +163,141 @@ const provider = new GoogleAuthProvider();
 
 - Click the Enable on the provider and select the project support email this email will recieve all the support emails
 
--Click Save
+- Click Save
+
+### Firestore essentials
+
+- The users that is located within the authenticated section and lists users is NOT directly linked to the projects firestore IE they are not neccarsily authenticated to access the store they simply users that have signed into the firebase project via the client setup. It will also list users signed in from varios providers: Facebook, Twitter etc ... 
+
+- Firestore is much like any schema it can be classified as a JSON file so its shape should conform for user 1 compared to user 1000.
+
+
+#### Firestore Database
+
+- Firestore essentials 
+    - Collection 
+    - Document
+    - Data
+
+Much like a folder structure above each separate piece of app info should be considered like a Model. eg a Collection of users , A collection of roles , A collection of todos etc
+
+DOCUMENT smallest unit in firestore it just stores the ID
+
+    TODOID
+
+DATA is the JSON data it can take any shape much like a JSON object
+
+    TODO
+     - Name
+     - Description
+     - Due Date: 
+        - Date
+        - Time
+
+
+Collections is a list of these Documents and related data
+
+#### How to create Firestore Database
+
+- Click create database 
+- Select Start in production Mode as its easier because it allows for users to set different parts of the documents etc
+- Choose Location closest to your location for speed etc
+- Click Enable (Note you are unable to change the location so pick wisely)
+
+- Click on rules this is the config for who can modify documents in your firestore
+
+The Below is an extract from the default rules when new database is created
+
+```
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+```
+
+
+- Update the config to allow for read and write on all documents Where false exists update to true
+
+- Click publish
+
+##### Storing users in Firestore
+
+```
+
+const userDocRef = doc(db, 'users', userAuth.uid);
+
+```
+
+- When this is logged out the userDocRef
+    - will represent some document reference
+    - path: points to online google uid points to a unique id nothing exists so it does not conflict but it points to a uncreated users collection
+    - Now you can use the getDoc method to get the snapshot
+
+```
+
+const userSnapshot = await getDoc(userDocRef)
+    console.log(userSnapshot);
+    console.log(userSnapshot.exists());
+
+```
+
+- exists() method checks if the user Document exists for the reference and the data within
+
+The following method will create a new users collection if it does not exist and it will create a new user.
+
+
+```
+
+export const createUserDocumentFromAuth = async (userAuth) => {
+    // Even though the users collection does not exist 
+    // Firestore will automatically generate the collection
+    const userDocRef = doc(db, 'users', userAuth.uid);
+
+    const userSnapshot = await getDoc(userDocRef)
+
+      // create / set the document with the data from userAuth in my collection
+    if(!userSnapshot.exists())
+    {
+      const { displayName, email , photoURL} = userAuth;
+      const createdAt = new Date();
+
+      try 
+      {
+        await setDoc(userDocRef,
+          {
+            displayName,
+            email,
+            photoURL,
+            createdAt
+          });
+      }
+      catch(error)
+      {
+        console.log(`Error creating user from Google Sign In ${error}`)
+      }
+    }
+    return userDocRef;
+  }
+
+  ```
+
+  - If you check the Data in the firestore it will show a new collection of Users whereas before the setDoc is not called it would shown the UID but not  that it was created in the store itself
+
+  
+
+
+
+
+
+
 
 
 
