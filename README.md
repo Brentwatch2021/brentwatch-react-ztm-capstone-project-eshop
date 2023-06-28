@@ -291,7 +291,168 @@ export const createUserDocumentFromAuth = async (userAuth) => {
 
   - If you check the Data in the firestore it will show a new collection of Users whereas before the setDoc is not called it would shown the UID but not  that it was created in the store itself
 
+The below is an example of using a redirect so when the user navigates away from the base site when it redirects it returns the user object from whatever the provider is google, facebook etc
+
+
+  ```
+
+  import { auth,signInWithGooglePopup, createUserDocumentFromAuth, signInWithGoogleRedirect } from "../../utils/firebase/firebase.utils";
+import { useEffect } from "react"; 
+import { getRedirectResult } from 'firebase/auth'
+
+
+const SignIn = () => 
+{
+
+    useEffect(() => {
+        GetRedirectedResponse();
+    }, [])
+
+    const GetRedirectedResponse = async () => 
+    {
+        const response = await getRedirectResult(auth);
+        if(response)
+        {
+            const userDocRef = createUserDocumentFromAuth(response.user);
+        }
+    }
+
+    const logGoogleUser = async () => {
+        const { user } = await signInWithGooglePopup();
+        const userDocRef = createUserDocumentFromAuth(user);
+    }
+
+    ...
+}
+
+```
+
+
+##### Native Firebase Providers
+
+  - Email/Password
+  - Phone
+  - Google
+  - Facebook
+  - Play Games
+  - Game Center
+  - Apple
+  - Github
+  - Microsoft
+  - Twitter
+  - Yahoo
+
+  ```
+
+  import { FacebookAuthProvider } from 'firebase/auth'
+
+  // Above is a built provider becuase its native
+
+  ```
+
+
+  ##### Email Sign Up and Sign In
+
+  - Add Email/SignUp 
+  - Enable 1st option
+  - Second option is with email link whereby it sends the user a email they click the link and it signs in automatically however it requires more configuration
+
+  - Firebase obfuscates the storing of passwords from us in order to prevent this sensitive information from been hacked firebase takes care of this work for us as a programmer this is great
+
   
+##### javascript Tip
+
+- I like the way you can pass props via the spread operator to allow mulitple attributes applied to an html element in the example below.
+
+``` 
+
+const FormInput = ({ label, ...otherProps}) => 
+{
+    return (
+        <div className="group">
+            <label className={`${otherProps.value.length ? 'shrink' : ''}` } fomr>{label}</label>
+            <input className="form-input" {...otherProps}/>
+        </div>
+    );
+}
+
+export default FormInput;
+
+```
+
+also great way to check if property exists or not
+
+```
+
+// label been the destructred label from the previous example
+label && (output html)
+
+```
+
+An alternative to the method above is the following Component Change
+
+```
+
+import './form-input.styles.scss'
+
+const FormInputAlt = ({ label, inputOptions}) => 
+{
+    return (
+        <div className='group'>
+            <input className='form-input' {...inputOptions} />
+            {label && (
+                <label 
+                className={`${
+                    inputOptions.value.length ? 'shrink' : ''
+                    } form-input-label`}>{label}</label>)}
+        </div>
+    );
+}
+
+export default FormInputAlt;
+
+
+```
+
+And the Consumption Change:
+
+```
+
+{/* Alteratve way is also to do input options */}
+                <FormInputAlt label='Display Name' inputOptions=
+                {{
+                    name:'displayName',
+                    type: 'text', 
+                    required: true,
+                    onChange: handleChange,
+                    value:displayName
+                }}/>
+
+```
+
+The second option allows for a clear separation of concerns in the naming convention like label input and the inputOptions. However I peronsally prefer the first method as it allows for normal property setup on the input tag as opposed to object based property setup allows for the html to be decoupled from the form input component you dont need to write the input in a specific way just the normal way however each person and company differ.
+
+A way to provide different looks in terms of styling for a component
+
+```
+
+const BUTTON_TYPE_CLASSES = {
+        google: 'google-sign-in',
+        inverted: 'inverted'
+    }
+
+const Button = ({children, buttonType, ...otherProps}) => {
+    return(
+        <button className={`button-container ${BUTTON_TYPE_CLASSES[buttonType]}`} {...otherProps}>
+            {children}
+        </button>
+    );
+}
+
+export default Button;
+
+```
+
 
 
 
