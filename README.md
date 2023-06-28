@@ -453,6 +453,37 @@ export default Button;
 
 ```
 
+TODO For 29/06/2023 implement all the firebase/auth error codes:
+
+```
+
+auth/app-deleted: This error occurs when the Firebase app associated with the authentication service has been deleted.
+
+auth/app-not-authorized: This error indicates that the app is not authorized to use Firebase Authentication.
+
+auth/argument-error: This error occurs when an invalid argument is passed to a Firebase Authentication method.
+
+auth/invalid-api-key: This error suggests that the provided API key is invalid or not authorized to access Firebase Authentication.
+
+auth/invalid-user-token: This error occurs when an invalid user token is provided for authentication.
+
+auth/network-request-failed: This error indicates a network error occurred while making a request to the Firebase Authentication service.
+
+auth/requires-recent-login: This error occurs when a sensitive operation is requested that requires the user to have recently signed in.
+
+auth/user-disabled: This error suggests that the user account has been disabled by an administrator and cannot be used for authentication.
+
+auth/user-not-found: This error occurs when attempting to sign in with an email/password or retrieve a user record that does not exist.
+
+auth/wrong-password: This error indicates that an incorrect password was provided during sign-in.
+
+auth/email-already-in-use: This error occurs when attempting to create a new user account with an email that is already associated with an existing account.
+
+auth/weak-password: This error suggests that the provided password is too weak and does not meet the security requirements.
+
+
+```
+
 
 
 
