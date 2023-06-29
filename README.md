@@ -453,36 +453,180 @@ export default Button;
 
 ```
 
-TODO For 29/06/2023 implement all the firebase/auth error codes:
+##### React Context
+
+This is a global state management pattern provided by react here is an example:
 
 ```
 
-auth/app-deleted: This error occurs when the Firebase app associated with the authentication service has been deleted.
+import { createContext, useState } from 'react'
 
-auth/app-not-authorized: This error indicates that the app is not authorized to use Firebase Authentication.
+// actual value you wanna access
+export const UserContext = createContext({
+    currentUser: null,
+    setCurrentUser: () => null,
+});
 
-auth/argument-error: This error occurs when an invalid argument is passed to a Firebase Authentication method.
+export const UserProvider = ({children}) => {
 
-auth/invalid-api-key: This error suggests that the provided API key is invalid or not authorized to access Firebase Authentication.
+    const [currentUser,setCurrentUser] = useState(null);
+    const value = { currentUser,setCurrentUser };
 
-auth/invalid-user-token: This error occurs when an invalid user token is provided for authentication.
-
-auth/network-request-failed: This error indicates a network error occurred while making a request to the Firebase Authentication service.
-
-auth/requires-recent-login: This error occurs when a sensitive operation is requested that requires the user to have recently signed in.
-
-auth/user-disabled: This error suggests that the user account has been disabled by an administrator and cannot be used for authentication.
-
-auth/user-not-found: This error occurs when attempting to sign in with an email/password or retrieve a user record that does not exist.
-
-auth/wrong-password: This error indicates that an incorrect password was provided during sign-in.
-
-auth/email-already-in-use: This error occurs when attempting to create a new user account with an email that is already associated with an existing account.
-
-auth/weak-password: This error suggests that the provided password is too weak and does not meet the security requirements.
+    // The provider is setup with the setter and getter functions
+    // for all children to have access to get or set the values above
+    return <UserContext.Provider value={value}>{children}</UserContext.Provider>
+}
 
 
 ```
+
+In order to to set the global state:
+
+```
+
+...
+
+import { UserContext } from '../../contexts/user.context';
+import { ...,useContext} from 'react'
+
+...
+
+// This will allow this component to set the current user
+const { setCurrentUser } = useContext(UserContext)
+
+...
+
+const { user} = await signInAuthUserWithEmailAndPassword(email, password);
+setCurrentUser(user);
+
+...
+
+```
+
+And to use the current user in a component so when it changes you can do the following:
+
+```
+
+const { currentUser } = useContext(UserContext)
+
+```
+
+Each component that uses the useContext and specifically the UserContext will rerender:
+
+for example:
+
+```
+
+import { Link, Outlet } from 'react-router-dom';
+import './navigation-bar.styles.scss'
+import { Fragment, useContext } from 'react';
+import { ReactComponent as CrwnLogo } from '../../assets/crown.svg'
+import { UserContext } from '../../contexts/user.context';
+
+const NavigationBar = () => {
+    // This will caus a rerender when 
+    // the user context is updated from the sign in
+    const { currentUser } = useContext(UserContext)
+    
+
+    return (
+    <Fragment>
+            <div className='navigation'>
+                <Link className='logo-container' to='/'>
+                    <CrwnLogo/>
+                </Link>
+                <div className='nav-links-container'>
+                    <Link className='nav-link' to='/auth'>
+                    Sign In
+                    </Link>
+                    <Link className='nav-link' to='/shop'>
+                        SHOP
+                    </Link>
+                </div>
+            </div>
+        <Outlet/>
+    </Fragment>
+    );
+}
+
+export default NavigationBar;
+
+```
+
+This navigation bar will rerender each time the UserContext gets updated and specifically because its an function component.
+
+```
+
+{
+    // This will caus a rerender when 
+    // the user context is updated from the sign in
+    const { currentUser } = useContext(UserContext)
+    
+
+    return (...)
+}
+
+```
+
+
+A way to centralize the authentication in an app below via user context 
+
+
+```
+
+useEffect(() => {
+        const unsubscribe = onAuthStateChangedListener((user) => {
+            if(user)
+            {
+                createUserDocumentFromAuth(user)
+            }
+            setCurrentUser(user);
+        })
+        
+        // This will clean the function to prevent memory leak and if there is complete callback
+        // subscribed on the firebase method onAuthStateChanged it would call the complete callback
+        return unsubscribe;
+    },[])
+
+
+```
+
+This allows for when a change occurs to the singleton auth object in my application it will reflect to whichever component is listening to the currentUser object centralizing 
+
+
+##### Observer pattern 
+
+The observer pattern emerges using the onAuthStateChanged(auth,callback) from 'firebase/auth'
+
+Subject (Publisher/Observable):
+
+The subject in this case is the Firebase Authentication service.
+It maintains the current authentication state, including information about whether a user is signed in or signed out.
+
+Observer (Subscriber/Listener):
+
+You can register multiple observers (subscribers) using the onAuthStateChanged method.
+- In our case as stated above we encapsulate the subscription so the user context can be consumed from any component by using the UserContext
+
+Subscription:
+
+When you call onAuthStateChanged, you are subscribing to receive notifications whenever the authentication state changes.
+The Firebase Authentication service keeps track of the subscribers and triggers the registered callbacks whenever there is a change in the authentication state.
+Notification:
+
+When there is a change in the authentication state, such as a user signing in or signing out, Firebase Authentication notifies all the subscribed callbacks by invoking them.
+The notification includes relevant information about the updated authentication state, such as the user's details.
+
+Callback Execution:
+
+Each registered callback function is executed in response to the notification.
+The callback functions can perform actions based on the updated authentication state, such as updating the UI, redirecting the user, or performing additional logic.
+
+
+
+
+
+
 
 
 

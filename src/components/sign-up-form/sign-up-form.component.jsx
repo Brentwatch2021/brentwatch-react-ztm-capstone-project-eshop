@@ -5,6 +5,7 @@ import FormInputAlt from "../form-input/form-input-alt.component";
 import './sign-up-form.styles.scss'
 import Button from "../button/button.component";
 
+
 const defaultformFields = {
     displayName: '',
     email: '',
@@ -17,16 +18,14 @@ const SignUpForm = () =>
     const [formFields, setFormFields] = useState(defaultformFields);
     const {  displayName, email,password, confirmPassword } = formFields;
 
+
     const resetFormFields = () => 
     {
         setFormFields(defaultformFields);
     }
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-
         if(password !== confirmPassword)
         {
             alert("passwords do not match");
@@ -36,19 +35,52 @@ const SignUpForm = () =>
         try
         {
             const { user } = await createAuthUserWithEmailAndPassword(email,password);
-
             await createUserDocumentFromAuth(user, { displayName });
             resetFormFields();
         }
         catch(error)
         {
-            if(error.code === 'auth/email-already-in-use')
+            switch (error.code) 
             {
-                alert('Error unable to create user. Email already in use');
-            }
-            else
-            {
-                console.log(`user creation encountered an error ${error}`);
+                case 'auth/app-deleted':
+                    alert('Unable to authenicate project unavailable from firebase.');
+                    break;
+                case 'auth/app-not-authorized':
+                    alert('This app is not authorized');
+                    break;
+                case 'auth/argument-error':
+                    alert('Argument Error.');
+                    break;
+                case 'auth/invalid-api-key':
+                    alert('Invalid API Key.');
+                    break;
+                case 'auth/invalid-user-token':
+                    alert('Invalid user token.');
+                    break;
+                case 'auth/network-request-failed':
+                    alert('Network error.');
+                    break;
+                case 'auth/requires-recent-login':
+                    alert('A sensitive operation has commenced please sign in again for the operation to complete.');
+                    break;
+                case 'auth/user-disabled':
+                    alert('The user has been disabled.');
+                    break;
+                case 'auth/user-not-found':
+                    alert('User not found.');
+                    break;
+                case 'auth/wrong-password':
+                    alert('Wrong password please try again.');
+                    break;
+                case 'auth/email-already-in-use':
+                    alert('Email already in use.');
+                    break;
+                case 'auth/weak-password':
+                    alert('Weak Password.');
+                    break;
+                default:
+                    alert('An unknown error occurred.');
+                    break;
             }
         }
 

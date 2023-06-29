@@ -1,91 +1,129 @@
-import { useState } from "react";
-import FormInput from "../form-input/form-input.component";
-import Button from "../button/button.component";
-import './sign-in-form.styles.scss'
-import { signInAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
+import { useContext, useState } from 'react';
+
+import FormInput from '../form-input/form-input.component';
+import Button from '../button/button.component';
+import { UserContext } from '../../contexts/user.context';
+
+import {
+  signInAuthUserWithEmailAndPassword,
+  signInWithGooglePopup,
+} from '../../utils/firebase/firebase.utils';
+
+import './sign-in-form.styles.scss';
 
 const defaultFormFields = {
-    email:'',
-    password:''
-}
+  email: '',
+  password: '',
+};
 
 const SignInForm = () => {
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { email, password } = formFields;
+  
 
-    const [formFields, setFormFields] = useState(defaultFormFields); 
-    const { email,password } = formFields;
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
 
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
-    }
+  const signInWithGoogle = async () => {
+    await signInWithGooglePopup();
+  };
 
-    const handleSignin = async (event) => {
-        event.preventDefault();
-        
-        try 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const { user} = await signInAuthUserWithEmailAndPassword(email, password);
+      resetFormFields();
+    } catch (error) 
+    {
+        switch (error.code) 
         {
-            const response = await signInAuthUserWithEmailAndPassword(email,password);
-            console.log(response);
-            resetFormFields();
+          case 'auth/app-deleted':
+            alert('Unable to authenicate project unavailable from firebase.');
+            break;
+          case 'auth/app-not-authorized':
+            alert('This app is not authorized');
+            break;
+          case 'auth/argument-error':
+            alert('Argument Error.');
+            break;
+          case 'auth/invalid-api-key':
+            alert('Invalid API Key.');
+            break;
+          case 'auth/invalid-user-token':
+            alert('Invalid user token.');
+            break;
+          case 'auth/network-request-failed':
+            alert('Network error.');
+            break;
+          case 'auth/requires-recent-login':
+            alert('A sensitive operation has commenced please sign in again for the operation to complete.');
+            break;
+          case 'auth/user-disabled':
+            alert('The user has been disabled.');
+            break;
+          case 'auth/user-not-found':
+            alert('User not found.');
+            break;
+          case 'auth/wrong-password':
+            alert('Wrong password please try again.');
+            break;
+          case 'auth/email-already-in-use':
+            alert('Email already in use.');
+            break;
+          case 'auth/weak-password':
+            alert('Weak Password.');
+            break;
+          default:
+            alert('An unknown error occurred.');
+            break;
         }
-        catch(error)
-        {
-            if(error.name === 'FirebaseError')
-            {
-                switch(error.code)
-                {
-                    case 'auth/wrong-password':
-                        alert('Wrong password try again');
-                    break;
-                    case 'auth/too-many-requests':
-                        alert('Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.');        
-                    break;
-                    case 'auth/user-not-found':
-                        alert('User not found');        
-                    break;
-                    default:
-                        console.log(error);
-                }
-            }
-            else
-            {
-                console.log(error)
-            }
-            
-            
-        }
-        
-
     }
+  };
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormFields({
-            ...formFields,
-            [name]:value
-        })
-    }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
+    setFormFields({ ...formFields, [name]: value });
+  };
 
-    return (
-        <div>
-            <h2>I already have an Account</h2>
-            <span>Sign in with your email and password</span>
-            <form onSubmit={handleSignin}>
-                <FormInput label='Email'name="email" 
-                 type="text" required onChange={handleChange}
-                  value={email}/>
+  return (
+    <div className='sign-in-container'>
+      <h2>Already have an account?</h2>
+      <span>Sign in with your email and password</span>
+      <form onSubmit={handleSubmit}>
+        <FormInput
+          label='Email'
+          type='email'
+          required
+          onChange={handleChange}
+          name='email'
+          value={email}
+        />
 
-                <FormInput label='Password'name="password" 
-                 type="password" required onChange={handleChange}
-                  value={password}/>
-                <div className="sign-in-form-submit-buttons-container">
-                    <Button type='submit' buttonType='email' email={email} password={password}>Sign in</Button>
-                    <Button type='button' buttonType='google'>Sign in with google</Button>
-                </div>
-            </form>
+        <FormInput
+          label='Password'
+          type='password'
+          required
+          onChange={handleChange}
+          name='password'
+          value={password}
+        />
+        <div className='sign-in-form-submit-buttons-container'>
+          <Button type='submit'>Sign In</Button>
+          <Button
+            buttonType='google'
+            type='button'
+            onClick={signInWithGoogle}
+          >
+            Sign In With Google
+          </Button>
         </div>
-    );
-}
+      </form>
+    </div>
+  );
+};
 
 export default SignInForm;

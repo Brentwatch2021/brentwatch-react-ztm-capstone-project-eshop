@@ -9,23 +9,23 @@ import './authentication.styles.scss'
 const Authentication = () => 
 {
 
-    useEffect(() => {
-        GetRedirectedResponse();
-    }, [])
+    // useEffect(() => {
+    //     GetRedirectedResponse();
+    // }, [])
 
-    const GetRedirectedResponse = async () => 
-    {
-        const response = await getRedirectResult(auth);
-        if(response)
-        {
-            const userDocRef = createUserDocumentFromAuth(response.user);
-        }
-    }
+    // const GetRedirectedResponse = async () => 
+    // {
+    //     const response = await getRedirectResult(auth);
+    //     if(response)
+    //     {
+    //         const userDocRef = createUserDocumentFromAuth(response.user);
+    //     }
+    // }
 
-    const logGoogleUser = async () => {
-        const { user } = await signInWithGooglePopup();
-        const userDocRef = createUserDocumentFromAuth(user);
-    }
+    // const logGoogleUser = async () => {
+    //     const { user } = await signInWithGooglePopup();
+    //     const userDocRef = createUserDocumentFromAuth(user);
+    // }
 
     
 
