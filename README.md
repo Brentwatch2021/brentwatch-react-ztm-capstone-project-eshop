@@ -710,11 +710,15 @@ export const BackgroundImage = styled.div`
 
 You are able to setup the Continues Integration by adding this command for create-react-app which allows 
 the netlify build action to override the default strict conditions in create react app to allow for the 
-build.
+build. 
+
+This will need to be added to the package.json file.
+
+
 
 ```
 
-CI=npm run build
+ "build": "CI=false react-scripts build",
 
 ```
 
