@@ -1,3 +1,5 @@
+import './cart-item.styles.scss'
+
 
 const CartItem = (props) => {
     const { name , quantity,imageUrl,price} = props.cartItem;

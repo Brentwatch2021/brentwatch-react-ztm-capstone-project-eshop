@@ -623,6 +623,100 @@ Each registered callback function is executed in response to the notification.
 The callback functions can perform actions based on the updated authentication state, such as updating the UI, redirecting the user, or performing additional logic.
 
 
+##### Firebase Batch Method
+
+The batch method works much like a transaction it can do multiple changes in the DB for different Document and if one of the instances fails the entire transaction fails and this is where the firebase Batch method comes into play:
+
+```
+
+ const batch = writeBatch(db);
+
+    objectsToAdd.forEach((object) => {
+      const docRef = doc(collectionRef,object.title.toLowerCase());
+      batch.set(docRef, object);
+    });
+
+    // Execute Transaction
+    await batch.commit();
+
+```
+
+
+##### React Use Effect
+
+When using an async function inside UseEffect you dont want to pass an async function but rather create one like below anything async in useEffect rather define new one and call it
+
+```
+
+useEffect(() => {
+        const getCategoriesMap = async () => {
+            const categoryMap = await getCategoriesAndDocuments();
+            console.log(categoryMap)
+        }
+
+        getCategoriesMap();
+    },[])
+
+
+```
+
+##### React Router Nested Routes
+
+```
+
+{/* This is the wildcard for any paramters after shop/* */}
+        <Route path="shop/*" element={<Shop/>}/>
+
+```
+
+##### js tip
+
+Loop over array keys to build content based on key of array:
+
+```
+
+{Object.keys(categoriesMap).map((title) => {
+        const products = categoriesMap[title];
+        return (
+          <CategoryPreview key={title} title={title} products={products} />
+        );
+      })}
+
+```
+
+##### Styled Components 
+
+This is a third party library which allows for your styles to be componentierized to prevent styles from overriding each other unlike plain css or scss.
+
+However when integrating styled components remember to clear cache or old HTML tags with old classes will remain dorment so ctrl + R.
+
+You are able to pass props into the styled component and consume them:
+
+```
+
+export const BackgroundImage = styled.div`
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-image: ${({ imageUrl }) => `url(${imageUrl})`}
+`;
+
+```
+
+
+
+##### Netlify
+
+You are able to setup the Continues Integration by adding this command for create-react-app which allows 
+the netlify build action to override the default strict conditions in create react app to allow for the 
+build.
+
+```
+
+CI=npm run build
+
+```
 
 
 
