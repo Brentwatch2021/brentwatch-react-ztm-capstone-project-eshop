@@ -734,6 +734,16 @@ This will allow the react app to function as an SPA so if a route like 'netlifya
 
 
 
+##### Reducers
+
+The reducer is a way to store objects in state and have them updated via Actions with or without an payload.
+
+In the example below when an item is added to the cart an action named 'ADD_ITEM_TO_CART' is called and the cart reducer is updated with whatever other values is connected unlike using useEffect and useState with React Context.
+
+![ACTIONS Example](src/note_reducers.jpg)
+
+
+
 
 
 
