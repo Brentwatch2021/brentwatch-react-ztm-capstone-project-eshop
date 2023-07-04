@@ -722,6 +722,16 @@ This will need to be added to the package.json file.
 
 ```
 
+To prevent any page not found issues in netlify online app be sure to add the _redirects file under public folder
+
+```
+
+/* index.html 200
+
+```
+
+This will allow the react app to function as an SPA so if a route like 'netlifyapp/shop/hats' occurs it always returns index.html to allow the react router to determine the page etc.
+
 
 
 
