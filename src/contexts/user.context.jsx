@@ -1,30 +1,56 @@
-import { createContext, useEffect, useState } from 'react'
-import { createUserDocumentFromAuth, onAuthStateChangedListener } from '../utils/firebase/firebase.utils';
+import { createContext, useEffect, useReducer, useState } from 'react';
 
-// actual value you wanna access
+import {
+  onAuthStateChangedListener,
+  createUserDocumentFromAuth,
+} from '../utils/firebase/firebase.utils';
+
 export const UserContext = createContext({
-    currentUser: null,
-    setCurrentUser: () => null,
+  setCurrentUser: () => null,
+  currentUser: null,
 });
 
-export const UserProvider = ({children}) => {
+export const USER_ACTION_TYPES = {
+  SET_CURRENT_USER: 'SET_CURRENT_USER',
+};
 
-    const [currentUser,setCurrentUser] = useState(null);
-    const value = { currentUser,setCurrentUser };
+const INITIAL_STATE = {
+  currentUser: null,
+};
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChangedListener((user) => {
-            if(user)
-            {
-                createUserDocumentFromAuth(user)
-            }
-            setCurrentUser(user);
-        })
+const userReducer = (state, action) => {
+  const { type, payload } = action;
 
-        return unsubscribe;
-    },[])
+  switch (type) {
+    case USER_ACTION_TYPES.SET_CURRENT_USER:
+      return { ...state, currentUser: payload };
+    default:
+      throw new Error(`Unhandled type ${type} in userReducer`);
+  }
+};
 
-    // The provider is setup with the setter and getter functions
-    // for all children to have access to get or set the values above
-    return <UserContext.Provider value={value}>{children}</UserContext.Provider>
-}
+export const UserProvider = ({ children }) => {
+  const [currentUser,setCurrentUser] = useState(null);
+
+  // TODO BUG NOT UPDATING user
+  //const [{ currentUser }, dispatch] = useReducer(userReducer, INITIAL_STATE);
+  // const setCurrentUser = (user) =>
+  //   dispatch({ type: USER_ACTION_TYPES.SET_CURRENT_USER, currentUser: user });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        createUserDocumentFromAuth(user);
+      }
+      setCurrentUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const value = {
+    currentUser,
+  };
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};

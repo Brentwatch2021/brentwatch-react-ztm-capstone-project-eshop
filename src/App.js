@@ -4,10 +4,33 @@ import Authentication from "./routes/authentication/authentication.component";
 import Shop from "./routes/shop/shop.component";
 import Checkout from "./routes/checkout/checkout.component";
 import NavigationBar from "./routes/navigation-bar/navigation-bar.component";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { createUserDocumentFromAuth, onAuthStateChangedListener } from "./utils/firebase/firebase.utils";
+import { setCurrentUser } from "./store/user/user.action";
 
 
 
 const App = () => { 
+  const dispatch = useDispatch();
+
+
+  useEffect(()=> {
+    const unsubscribe = onAuthStateChangedListener((user) => {
+        if(user)
+        {
+          createUserDocumentFromAuth(user);
+        }
+
+        dispatch(setCurrentUser(user));
+    });
+
+    return unsubscribe;
+
+    // warning below is to add the dispatch however we know its 
+    // only going to be dispatched once
+  },[])
+
   return (
     <Routes>
       <Route path="/" element={<NavigationBar/>}>

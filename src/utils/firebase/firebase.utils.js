@@ -83,6 +83,14 @@ const firebaseConfig = {
     return categoryMap;
   }
 
+  export const getCategoriesAndDocumentsForReduxSelector = async () => {
+    const collectionRef = collection(db,'categories');
+    const q = query(collectionRef);
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
+  }
+
   export const createUserDocumentFromAuth = async (userAuth,additonalInformation = {}) => {
 
     if(!userAuth) return;

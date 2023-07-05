@@ -704,7 +704,7 @@ export const BackgroundImage = styled.div`
 
 ```
 
-
+There is some trade offs with using styled components it compiles at runtime so therefore performance does take a hit however in a enterprise level application where you might be able to afford to take a hit on performance to prevent error redundancy then this approach will work especially on 20 to 30 person developer team.
 
 ##### Netlify
 
@@ -734,13 +734,221 @@ This will allow the react app to function as an SPA so if a route like 'netlifya
 
 
 
-##### Reducers
-
-The reducer is a way to store objects in state and have them updated via Actions with or without an payload.
-
-In the example below when an item is added to the cart an action named 'ADD_ITEM_TO_CART' is called and the cart reducer is updated with whatever other values is connected unlike using useEffect and useState with React Context.
+##### Redux
 
 ![ACTIONS Example](src/note_reducers.jpg)
+
+Example with reducers and context:
+
+![Reducers Dataflow Example](src/note_reducers_context.jpg)
+
+Example with redux data flow:
+
+![Redux Data flow Example](src/note_redux_flow.jpg) 
+
+
+Actions:
+
+Action in Redux terminology refers to a plain JavaScript object, sometimes accompanied by helper methods, that describes an intention to change the application's state.
+
+```
+
+export const clearItemFromCart = (cartItems, cartItemToRemove) =>
+{
+        const newCartItems = clearCartItem(cartItems,cartItemToRemove);
+        return createAction(CART_ACTION_TYPES.SET_CART_ITEMS, newCartItems);
+}
+
+```
+
+To Consume an action from a component you will always need to dispatch it and with this setup we 
+need to supply the current cartItems array so you would also need to supply the current list of cartItems
+
+```
+    // useDispatch from 'react-redux'
+    const dispatch = useDispatch();
+    // useSelector from 'react-redux'
+    const cartItems = useSelector(selectCartItems);
+    
+    const clearItemHandler = () => { 
+      dispatch(clearItemFromCart(cartItems,cartItem));
+    }
+
+```
+
+Reducers:
+
+In Redux, a reducer is a pure function responsible for handling actions and producing the next state of an application. It takes in the current state and an action as input and returns the new state. Reducers are designed to be predictable and should not mutate the state directly. Instead, they create a new state object based on the current state and the action received. The reducer is a crucial component in Redux as it determines how the state should be updated in response to different actions.
+
+```
+
+import { CATEGORIES_ACTION_TYPES } from "./category.types";
+
+export const CATEGORIES_INITIAL_STATE = {
+    categories: [],
+}
+
+export const categoriesReducer = (state = CATEGORIES_INITIAL_STATE, action = {}) =>
+{
+    const { type, payload } = action;
+
+    switch(type) {
+        case CATEGORIES_ACTION_TYPES.SET_CATEGORIES:
+            return { ...state, categories: payload }
+        default:
+            return state;
+    }
+}
+
+```
+
+Selectors:
+
+Selectors in Redux are functions that retrieve and compute derived data from the application state. They help decouple the components from the structure of the state, promoting reusability and allowing efficient memoization for performance optimization using libraries like Reselect.
+
+Types:
+
+In Redux, types refer to action type constants, typically defined as string values, used to identify and differentiate different actions in the application. They are used to handle actions in reducers and ensure consistency throughout the codebase.
+
+When creating your reducer:
+
+```
+
+// the root reducer runs through all the reducer actions 
+// hence why at the end of each reducer we should by default 
+// return the original state
+export const userReducer = (state = USER_INITIAL_STATE, action = {}) => {
+    const {type, payload} = action;
+
+    switch (type)
+    {
+        case USER_ACTION_TYPES.SET_CURRENT_USER:
+        return { ...state,currentUser: payload };
+        default:
+            return state;
+
+    }
+}
+
+
+```
+
+###### Redux Reselect
+
+
+Reselect is a library for memoized selectors in Redux. It efficiently computes derived data from the Redux store, optimizing performance by avoiding unnecessary recalculations when the input state remains unchanged.
+
+
+```
+
+import { createSelector } from 'reselect';
+
+const selectCategoryReducer = (state) => state.categories;
+
+export const selectCategories = createSelector(
+    [selectCategoryReducer],
+    (categoriesSlice) => categoriesSlice.categories
+  );
+
+  export const selectCategoriesMap = createSelector(
+    [selectCategories],
+    (categories) => {
+       return categories.reduce((acc, category) => {
+            const { title, items} = category;
+            acc[title.toLowerCase()] = items;
+            return acc;
+        },{})
+    }
+);
+
+
+```
+
+###### Redux Persist
+
+Redux Persist is a library for persisting the Redux store data across browser refreshes or app restarts. It enables seamless state persistence by automatically storing and rehydrating the state from storage mechanisms like local storage or AsyncStorage.
+
+```
+
+npm install redux-persist
+
+```
+
+
+The import statement storage from 'redux-persist/lib/storage' is used to import the storage mechanism provided by the Redux Persist library. It provides an abstraction for storage operations, allowing data to be saved and retrieved from the chosen storage engine (e.g., localStorage, AsyncStorage).
+
+
+In the example below we are casting the storage to use localstorage of the browser by default as the keyname.
+
+```
+
+const persistConfig = {
+    key: 'root',
+    storage,
+    blacklist:['user']
+}
+
+
+```
+
+The blacklist is which named key of the assoiciated reducer should not be stored 
+we wont store the user as we are already hooking into firebase onAuth changed hook 
+and dont want any unwated conflicting persist issues
+
+###### REDUX THUNK
+
+Redux Thunk is a middleware for Redux that allows writing action creators that return functions instead of plain action objects. These functions can dispatch multiple actions asynchronously, perform side effects like API calls, and delay dispatching actions until certain conditions are met, enhancing the flexibility of Redux workflows.
+
+
+Example of action been able to dispatch another synchronous action within
+
+```
+
+dispatch(fetchCategoriesStart());
+
+```
+
+Full function here:
+
+``` 
+
+export const fetchCategoriesStartAsync = () => {
+  return async (dispatch) => {
+    dispatch(fetchCategoriesStart());
+    try {
+      const categoriesArray = await getCategoriesAndDocumentsForReduxSelector('categories');
+      dispatch(fetchCategoriesSuccess(categoriesArray));
+    } catch (error) {
+      dispatch(fetchCategoriesFailure(error));
+    }
+  };
+};
+
+
+```
+
+
+###### REDUX SAGA
+
+Redux Saga is a middleware library for managing side effects in Redux applications. It provides an elegant way to handle asynchronous actions, such as API calls, by using generator functions to create complex and asynchronous workflows, allowing for better control and coordination of application state.
+
+
+SAGA works much the same as generator functions
+
+Generator function:
+
+A generator function in JavaScript is a special type of function that can be paused and resumed during execution, allowing for the generation of a sequence of values over time. It provides a powerful mechanism for writing code that produces values on demand, making it useful for handling asynchronous operations and iterating over large data sets.
+
+
+![JS ES 6 2015 Example](src/generator_function.jpg)
+
+
+
+
+
+
+
+
 
 
 

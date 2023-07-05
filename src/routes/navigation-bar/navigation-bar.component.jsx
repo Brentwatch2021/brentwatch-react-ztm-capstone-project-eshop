@@ -8,12 +8,21 @@ import CartIcon from '../../components/cart-icon/cart-icon.component.jsx';
 import CartDropDown from '../../components/cart-drop-down/cart-drop-down.component.jsx';
 import { CartContext } from '../../contexts/cart.context.jsx';
 import { LogoContainer, NavLink, NavLinks, NavigationContainer } from './navigation-bar.styles.jsx';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../store/user/user.selector.js';
+import { selectIsCartOpen } from '../../store/cart/cart.selector.js';
 
 const NavigationBar = () => {
     // This will caus a rerender when 
     // the user context is updated from the sign in
-    const { currentUser } = useContext(UserContext)
-    const { isCartOpen } = useContext(CartContext);
+    //const { currentUser }  = useContext(UserContext)
+    //console.log('navigation bar')
+    //console.log(currentUser)
+
+    const currentUser = useSelector(selectCurrentUser);
+
+    //const { isCartOpen } = useContext(CartContext);
+    const isCartOpen = useSelector(selectIsCartOpen);
 
 
     return (
