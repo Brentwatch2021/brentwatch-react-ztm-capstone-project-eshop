@@ -8,9 +8,10 @@ import CartIcon from '../../components/cart-icon/cart-icon.component.jsx';
 import CartDropDown from '../../components/cart-drop-down/cart-drop-down.component.jsx';
 import { CartContext } from '../../contexts/cart.context.jsx';
 import { LogoContainer, NavLink, NavLinks, NavigationContainer } from './navigation-bar.styles.jsx';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../store/user/user.selector.js';
 import { selectIsCartOpen } from '../../store/cart/cart.selector.js';
+import { signOutStart } from '../../store/user/user.action.js';
 
 const NavigationBar = () => {
     // This will caus a rerender when 
@@ -20,10 +21,14 @@ const NavigationBar = () => {
     //console.log(currentUser)
 
     const currentUser = useSelector(selectCurrentUser);
-
+    const dispatch = useDispatch();
     //const { isCartOpen } = useContext(CartContext);
     const isCartOpen = useSelector(selectIsCartOpen);
 
+    const signOutHandler = (event) => 
+    {
+      dispatch(signOutStart());
+    }
 
     return (
         <Fragment>
@@ -35,7 +40,7 @@ const NavigationBar = () => {
             <NavLink to='/shop'>SHOP</NavLink>
   
             {currentUser ? (
-              <NavLink as='span' onClick={signOutUser}>
+              <NavLink as='span' onClick={signOutHandler}>
                 SIGN OUT
               </NavLink>
             ) : (

@@ -122,7 +122,9 @@ const firebaseConfig = {
         console.log(`Error creating user from Google Sign In ${error}`)
       }
     }
-    return userDocRef;
+    //return userDocRef; 
+    // change for user saga
+    return userSnapshot;
   }
 
 
@@ -141,5 +143,17 @@ const firebaseConfig = {
   export const signOutUser = async () => await signOut(auth);
 
   export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth,callback)
+
+  export const getCurrentUser = () => 
+  {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth,(userAuth) => {
+        unsubscribe();
+        resolve(userAuth)
+      },
+      reject
+      )
+    });
+  }
 
 

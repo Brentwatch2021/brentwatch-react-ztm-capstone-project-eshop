@@ -18,6 +18,8 @@ export function* fetchCategoriesAsync(){
     }
 }
 
+
+
 export function* onFetchCategories()
 {
     yield takeLatest(

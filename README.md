@@ -943,6 +943,154 @@ A generator function in JavaScript is a special type of function that can be pau
 ![JS ES 6 2015 Example](src/generator_function.jpg)
 
 
+#### The Main functions of a saga is the following:
+
+
+##### CALL 
+
+This effect invokes a function asynchronously and waits for it to complete before proceeding to the next step in the generator.
+
+```
+/*
+ * @param fn A Generator function, or normal function which either returns a
+ *   Promise as result, or any other value.
+ * @param args An array of values to be passed as arguments to `fn`
+*/
+const categoriesArray = yield call(getCategoriesAndDocumentsForReduxSelector, 'categories');
+
+```
+
+##### PUT:
+
+This effect dispatches an action to the Redux store, allowing state changes in response to certain events or triggers.
+
+```
+
+/**
+ * Creates an Effect description that instructs the middleware to dispatch an
+ * action to the Store. This effect is non-blocking, any errors that are
+ * thrown downstream (e.g. in a reducer) will bubble back into the saga.
+ *
+ * @param action [see Redux `dispatch` documentation for complete info](https://redux.js.org/api/store#dispatchaction)
+ */
+
+ yield put(fetchCategoriesSuccess(categoriesArray));
+
+/*
+    The yield keyword is used in JavaScript generators and async functions to pause the execution of a function and return a value. It allows the function to be resumed later, and each time the function is resumed, it continues from where it left off, maintaining its internal state.
+*/
+
+
+```
+
+##### all:
+
+This effect allows multiple sagas to be run concurrently, enabling parallel execution of sagas.
+
+```
+
+/**
+ * Creates an Effect description that instructs the middleware to run multiple
+ * Effects in parallel and wait for all of them to complete. It's quite the
+ * corresponding API to standard
+ * [`Promise#all`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
+ *
+ * #### Example
+ *
+ * The following example runs two blocking calls in parallel:
+ *
+ *    import { fetchCustomers, fetchProducts } from './path/to/api'
+ *    import { all, call } from `redux-saga/effects`
+ *
+ *    function* mySaga() {
+ *      const [customers, products] = yield all([
+ *        call(fetchCustomers),
+ *        call(fetchProducts)
+ *      ])
+ *    }
+ */
+yield all([call(onFetchCategories)]);
+
+
+``` 
+
+##### Takelatest
+
+This effect listens for a specified action and, if multiple instances of the action occur, only the latest one is processed while canceling previous ones.
+
+
+```
+
+/**
+ * Spawns a `saga` on each action dispatched to the Store that matches
+ * `pattern`. And automatically cancels any previous `saga` task started
+ * previously if it's still running.
+ *
+ * Each time an action is dispatched to the store. And if this action matches
+ * `pattern`, `takeLatest` starts a new `saga` task in the background. If a
+ * `saga` task was started previously (on the last action dispatched before the
+ * actual action), and if this task is still running, the task will be
+ * cancelled.
+ *
+ * #### Example
+ *
+ * In the following example, we create a basic task `fetchUser`. We use
+ * `takeLatest` to start a new `fetchUser` task on each dispatched
+ * `USER_REQUESTED` action. Since `takeLatest` cancels any pending task started
+ * previously, we ensure that if a user triggers multiple consecutive
+ * `USER_REQUESTED` actions rapidly, we'll only conclude with the latest action
+ *
+ *    import { takeLatest } from `redux-saga/effects`
+ *
+ *    function* fetchUser(action) {
+ *      ...
+ *    }
+ *
+ *    function* watchLastFetchUser() {
+ *      yield takeLatest('USER_REQUESTED', fetchUser)
+ *    }
+ *
+ * #### Notes
+ *
+ * `takeLatest` is a high-level API built using `take` and `fork`. Here is how
+ * the helper could be implemented using the low-level Effects
+ *
+ *    const takeLatest = (patternOrChannel, saga, ...args) => fork(function*() {
+ *      let lastTask
+ *      while (true) {
+ *        const action = yield take(patternOrChannel)
+ *        if (lastTask) {
+ *          yield cancel(lastTask) // cancel is no-op if the task has already terminated
+ *        }
+ *        lastTask = yield fork(saga, ...args.concat(action))
+ *      }
+ *    })
+ *
+ * @param pattern for more information see docs for [`take(pattern)`](#takepattern)
+ * @param saga a Generator function
+ * @param args arguments to be passed to the started task. `takeLatest` will add
+ *   the incoming action to the argument list (i.e. the action will be the last
+ *   argument provided to `saga`)
+ */
+yield takeLatest(
+        CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START,
+        fetchCategoriesAsync
+    );
+
+// Takes the action as the first paramter and cancels any prior actions running or just started and starts a new action with new saga
+
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
