@@ -66,9 +66,17 @@ export function* Google_Sign_In()
 
 export function* Sign_Up({ payload: {email,password,displayName}})
 {
-  const { user } = yield call(createAuthUserWithEmailAndPassword,email,password);
-  // create signInafter action with userAuth and display name dispatching signUpSuccess
-  yield put(signupSuccess(user,{displayName}));
+  try
+  {
+    const { user } = yield call(createAuthUserWithEmailAndPassword,email,password);
+    // dispatch signUpSuccess once user has been created and add the display
+    // name as additonal information
+    yield put(signupSuccess(user,{displayName}));
+  }
+  catch(error)
+  {
+    yield put(signOutFailed(error))
+  } 
 }
 
 export function* SignInAfterSignUp({payload:{user,additionalInformation}})

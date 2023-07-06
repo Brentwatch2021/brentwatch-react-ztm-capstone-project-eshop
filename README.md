@@ -1082,6 +1082,30 @@ yield takeLatest(
 ```
 
 
+Here is an example of dispatching another action within an Saga:
+
+
+```
+
+export function* Sign_Up({ payload: {email,password,displayName}})
+{
+  try
+  {
+    const { user } = yield call(createAuthUserWithEmailAndPassword,email,password);
+    // dispatch signUpSuccess once user has been created and add the display
+    // name as additonal information
+    yield put(signupSuccess(user,{displayName}));
+  }
+  catch(error)
+  {
+    yield put(signOutFailed(error))
+  } 
+}
+
+```
+
+
+
 
 
 
