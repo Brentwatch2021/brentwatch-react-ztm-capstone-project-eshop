@@ -25,14 +25,18 @@ const PaymentForm = () =>
         
         // client secret links is used for the payment to link the intent to the 
         // payment
-        const { paymentIntent: {client_secret} } = response;
-        if(client_secret)
+        //const { paymentIntent: {client_secret} } = response;
+        // if(client_secret)
+        // {
+        //     //alert(client_secret);
+        // }
+        const clientSecret = response.paymentIntent.client_secret;
+        if(clientSecret)
         {
-            alert(client_secret);
+            alert('Payment Intent complete');
         }
 
-
-        // TODO Need to fix not going through 
+        //TODO Need to fix not going through 
         // const paymentResult = await stripe.confirmCardPayment(client_secret,{
         //     payment_method: {
         //         // CARD Element is a singleton like all stripe elements
@@ -42,6 +46,17 @@ const PaymentForm = () =>
         //         }
         //     }
         // })
+
+        // const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        //     payment_method: {
+        //       card: elements.getElement(CardElement),
+        //       billing_details: {
+        //         name: 'Brent Watch',
+        //       },
+        //     },
+        //   });
+
+
 
         // if(paymentResult.error)
         // {
@@ -53,8 +68,6 @@ const PaymentForm = () =>
         //         alert('Payment Successful');
         //     }
         // }
-
-
     }   
 
     return (
