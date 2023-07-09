@@ -1,40 +1,3 @@
-# How to fork and clone
-One quick note about cloning this project. If you wish to make commits and push your own code, you'll need to fork the project first. Forking allows you to have your own copy of this repository by adding a duplicate version in your own profile!
-
-You can see the fork button in the top right corner of every GitHub project; click it and a copy of the project will be added to your GitHub profile under the same name as the original project.
-
-<img width="612" alt="github fork" src="https://user-images.githubusercontent.com/10578605/157998981-4bfd1f83-825c-4664-b22d-b2c7d471dc70.png">
-
-After forking the project, simply clone it the way you would from the new forked project in your own GitHub repository and you can commit and push to it freely!
-
-# After you fork and clone:
-
-## Install dependencies
-In your terminal after you clone your project down, remember to run either `yarn` or `npm install` to build all the dependencies in the project.
-
-## Set your firebase config
-
-Remember to replace the config variable in your firebase.utils.js with your own config object from the firebase dashboard! Navigate to the project settings gear icon > project settings and scroll down to the config code. Copy the object in the code and replace the variable in your cloned code.
-
-<img width="1261" alt="Screen Shot 2022-03-11 at 8 51 22 PM" src="https://user-images.githubusercontent.com/10578605/157999158-10e921cc-9ee5-46f6-a0c5-1ae5686f54f3.png">
-
-# Branching strategy
-
-After forking this repository and cloning it down, you will have access to all the lesson branches with code at different checkpoints throughout the course. If for some reason you need to work from the codebase at one of these lesson branch checkpoints, follow these steps:
-
-1. Checkout to the lesson-# (let's use lesson-15 as an example) branch
-```
-git checkout lesson-15
-```
-2. Branch off from lesson-15. This will create a new branch where the code of lesson-15 is the basis for your new branch. You can name your new branch whatever you want! Let's say we use my-main-branch as the name.
-```
-git checkout -b my-main-branch
-```
-3. Now you can just code on this branch, push code from this branch up to your forked repo etc. The main thing to remember is that you want to be on this branch for your own code, so remember what you named this branch!
-
-
-
-
 # Notes
 
 - Package-lock.json locks any specific library or package to the specific project to prevent version     clashes
@@ -1105,12 +1068,502 @@ export function* Sign_Up({ payload: {email,password,displayName}})
 ```
 
 
+#### Redux Toolkit
+
+Redux Toolkit is a library that simplifies the process of managing state in React applications using Redux. It provides a set of opinionated tools and utilities, including a concise API, to reduce boilerplate code and improve developer productivity. With Redux Toolkit, you can easily define actions, reducers, and store configurations, allowing for efficient state management. It also integrates seamlessly with React components, enabling efficient updates and re-rendering. Overall, Redux Toolkit streamlines the Redux workflow and enhances the development experience for React applications.
+
+By default Redux toolkit comes with Redux Thunk added.
+
+```
+// When the middleware is explicity set the other default included middleware is 
+// NOT included
+export const store = configureStore(reducer: rootReducer,middleware:middleware)
+
+
+/// With CreateSlice it creates the Action 
+
+
+
+export const userSlice = createSlice({
+  name: 'user',
+  initialState: INITIAL_STATE,
+  reducers: {
+    // setCurrentUser is now an action within toolkit
+    setCurrentUser(state, action) {
+        // state still gets mutated and is still immutable under the hood
+        // redux toolkit creates a new state by using a library emmer
+      state.currentUser = action.payload;
+    },
+  },
+});
+
+```
+
+Elimitating two files of extra boilerplate code Actions and Types
+
+Now we are able to pull off the userSlice Action from the object
+
+```
+
+export const { setCurrentUser } = userSlice.actions
+
+export const userReducer = userSlice.reducer
+
+```
+
+
+##### Thunk: 
+
+A middleware that enables writing action creators that return functions instead of plain objects, allowing for asynchronous logic and side effects in Redux applications.
+
+##### Immutable State Invariant: 
+
+A middleware that checks if any state mutations occur outside of reducers, helping to maintain the immutability principle in Redux and catch accidental modifications.
+
+##### Serializability Checker: 
+
+A middleware that verifies if the Redux state is serializable, ensuring that the state can be serialized and deserialized correctly, which is crucial for features like time-travel debugging and server-side rendering.
+
+
+
+
+The non-serializable middleware in Redux Toolkit is designed to catch potential issues related to using certain types of data in actions. By default, it prevents the inclusion of non-serializable values in Redux actions. Non-serializable values are those that cannot be easily converted to a plain JavaScript object, typically because they have internal state or behavior that cannot be replicated.
+
+Some examples of non-allowed types are functions, Promises, Dates, and non-plain JavaScript objects. Functions and Promises represent behavior or asynchronous operations that should not be stored in the Redux store. Dates and non-plain JavaScript objects may have internal state that can lead to unexpected behavior when serializing and deserializing the state.
+
+The non-serializable middleware helps enforce best practices by encouraging the use of plain data structures in Redux actions, ensuring predictable and serializable state updates.
+
+Ways to get around this issue is by turning off the default middleware
+
+```
+
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+        serializableCheck: false,
+    }).concat(middleWares),
+});
+
+```
+
+
+##### Stripe
+
+
+```
+
+// install
+npm install stripe/stripe-js stripe/react-stripe-js
+
+```
+
+This includes some already built components from stripe to integrate into your web app
+
+
+create-react-app by default allows us to use the .env file for enviroment variables all variables must start with REACT_APP...
+
+
+
+#### Netlify Server Functions
+
+in order to setup the server functions you need to add a folder to the root of your project like below:
+
+
+![Serverless Functions](src/netlify_route.jpg)
+
+It will always look for a folder named functions under the netlify
+
+Whatever the name of the file is the name of the route for the HTTP Endpoint.
+
+create-payment-intent.js
+
+When working with netlify functions its a new node enviroment so when you wanna invoke the .env file you will need to install the dotenv node package becuase we are not in create react app land.
+
+##### Netlifiy CLI
+
+This will help hook up the server function for the stripe function.
+
+install the netlify onto the global instance of the local pc.
+
+It will allow you to update variables and a range of other things on netlify without going via the web portal.
+
+```
+
+npm install -g netlify-cli
+
+```
+
+by typing netlify into the terminal you will see all the Commands available
+
+ $ addons       (Beta) Manage Netlify Add-ons
+  $ api          Run any Netlify API method
+  $ build        (Beta) Build on your local machine
+  $ completion   (Beta) Generate shell completion script
+  $ deploy       Create a new deploy from the contents of a folder
+  $ dev          Local dev server
+  $ env          Control environment variables for the current site
+  $ functions    Manage netlify functions
+  $ recipes      (Beta) Create and modify files in a project using pre-defined recipes
+  $ init         Configure continuous deployment for a new or existing site. To create a new site without continuous deployment, use `netlify sites:create`
+  $ link         Link a local repo or project folder to an existing site on Netlify
+  $ lm           Handle Netlify Large Media operations
+  $ login        Login to your Netlify account
+  $ open         Open settings for the site linked to the current folder
+  $ serve        (Beta) Build the site for production and serve locally. This does not watch the code for changes, so if you need to rebuild your site then you must exit and run `serve` again.
+  $ sites        Handle various site operations
+  $ status       Print status information
+  $ switch       Switch your active Netlify account
+  $ unlink       Unlink a local folder from a Netlify site
+  $ watch        Watch for site deploy to finish
+
+  to use any of these commands you would need to login by running netlify login it will login via interface
+
+  To run a local dev enviroment hit netlify dev 
+
+  This will use the same build enviroment as the netlifiy build on netlify servers as your pc.
+  it will also integrate your server functions into the build allowing you to test your server functions locally.
+
+
+# NB STRIPE ACCEPTS PAYMENTS IN CENTS
+
+
+```
+
+exports.handler = async (event) => {
+    try{
+        // With Stripe it takes Cents as a whole number
+        const { amount } = JSON.parse(event.body);
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: "usd",
+            payment_method_types: ["card"]
+        });
+        return { statusCode: 200,
+        body: JSON.stringify({ paymentIntent}) 
+        }
+    }catch(error)
+    {
+        console.log({ error });
+
+        return {
+            status: 400,
+            body: JSON.stringify({error})
+        }
+    }
+}
+
+```
+
+In AWS Lambda, the handler function is the entry point for your serverless function. It is the function that gets executed when the Lambda function is triggered. The exports.handler syntax is used to export the function as the handler for the Lambda function.
+
+Here's a breakdown of the components in the line:
+
+exports: It is an object provided by the CommonJS module system in Node.js that allows you to export functions, objects, or variables from a module.
+handler: It is the name of the exported function that will serve as the entry point for the Lambda function. You can choose any name you prefer.
+async (event) => { ... }: This is an arrow function that is defined as async. It takes an event parameter, which represents the input data passed to the Lambda function.
+async: The async keyword indicates that the function is an asynchronous function. It enables the use of await to handle asynchronous operations within the function.
+(event) => { ... }: It is the function body, where you write the logic for processing the input event and generating the desired output.
+Inside the function body, you can write the code to handle the event, perform any necessary computations or operations, and return a response. The async keyword allows you to use await to handle promises and make asynchronous code look more synchronous.
+
+Keep in mind that this code snippet is specific to defining a handler for an AWS Lambda function. The actual implementation and behavior of the function depend on the specific requirements of your application and the AWS Lambda event structure you are working with.
+
+
+## STRIPE Test Cards
+
+[Stripe Test Cards](https://stripe.com/docs/testing#cards)
+
+[Stripe React UI Elements](https://stripe.com/docs/stripe-js/react#available-element-components)
+
+
+# Stripe Issue
+
+Modules not found issue
+
+When installing the module it sets it up like this in your package.json
+
+```
+
+"@stripe/react-stripe-js": "github:stripe/react-stripe-js",
+"@stripe/stripe-js": "github:stripe/stripe-js",
+
+```
+
+It should instead read:
+
+```
+
+ "@stripe/react-stripe-js": "^2.1.1",
+ "@stripe/stripe-js": "^1.54.1",
+
+```
+
+With the version numbers not the github repos.
+
+It should be installed like below to prevent this issue:
+
+```
+
+npm install @stripe/react-stripe-js@1.1.2
+
+npm install @@stripe/stripe-js@1.11.0
+
+```
+
+Here is the npm links to the live packages online to make sure you always use the latest
+
+[@stripe/react-stripe-js](https://www.npmjs.com/package/@stripe/react-stripe-js)
+
+[@stripe/stripe-js](https://www.npmjs.com/package/@stripe/stripe-js)
+
+
+[Stripe Payment Method Types](https://stripe.com/docs/api/payment_intents/object?lang=node#payment_intent_object-payment_method_types)
+
+
+# TypeScript
+
+TypeScript is a strongly typed superset of JavaScript that offers several advantages. Firstly, it provides static typing, enabling early error detection and better code quality. With TypeScript, developers can catch common errors during development and benefit from autocompletion and code navigation tools. Additionally, TypeScript supports modern JavaScript features, making it compatible with existing JavaScript codebases. It enhances code scalability and maintainability by supporting object-oriented programming concepts such as classes, interfaces, and modules. TypeScript also aids in documentation generation and improves collaboration in large teams. Its transpilation process ensures cross-browser compatibility, and its growing community provides extensive tooling and library support.
+
+
+Main Advantage:
+
+ Javascript is dynamically typed so only at runtime will it run into errors when it tries and calls methods on on objects that methods dont exist like trying to call toLowerCase() on an array will only caus error at runtime with TypeScript it will happen at code time.
+
+We should never use the any keyword as this defeats the purpose of typescript instead the variable should be typed.
+
+n TypeScript, however, there is a difference. The lowercase string represents the primitive type for string values, whereas the uppercase String refers to the String object type. The string primitive type is the recommended one to use in TypeScript for string values.
+
+
+Installing TypeScript:
+
+```
+
+npm install typescript @types/node @types/react @types/react-dom @types/jest
+
+```
+
+
+After Installing You will need to add a TS Config otherwise without it if you convert a jsx or js file 
+you will recieve the following error:
+
+
+![No TS setup](src/notsConfigerror.jpg)
 
 
 
 
 
+TS Config
 
+tsconfig refers to the tsconfig.json file, which is a configuration file used in TypeScript projects. It specifies various compiler options and settings for the TypeScript compiler (tsc). The tsconfig.json file defines project-specific compilation settings, module resolution, file inclusion/exclusion patterns, target ECMAScript version, and more. It allows developers to customize the TypeScript compilation process for their projects.
+
+
+
+
+#### Interface Overloading 
+
+Object overloading in TypeScript refers to the ability to define multiple function signatures for an object's method or function, allowing different combinations of parameters and return types to be used. This enables the flexibility to handle varying input types and produce different output types based on the provided arguments.
+
+Here's an example of object overloading in TypeScript:
+
+```
+interface MathOperation {
+  add(x: number, y: number): number;
+  add(x: string, y: string): string;
+}
+
+const math: MathOperation = {
+  add: (x: number | string, y: number | string): number | string => {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x + y; // Addition of numbers
+    }
+    if (typeof x === 'string' && typeof y === 'string') {
+      return x.concat(y); // Concatenation of strings
+    }
+    throw new Error('Invalid arguments');
+  }
+};
+
+console.log(math.add(5, 10)); // Output: 15
+console.log(math.add("Hello", " TypeScript!"));
+
+```
+
+Making Interfaces Extensisble Typescript under the hood combines the interfaces and allows you to overload your Interface
+
+Types dont have the ability to overload and combine
+
+having an optional paramter can be defined:
+
+```
+// ? allows the property to be optional
+interface ITest
+{
+    Itest?:string
+}
+
+```
+
+
+##### Union Types
+
+Union types in TypeScript allow variables to hold values of multiple types, providing flexibility and code reuse. They enable conditional logic and dynamic type variations, allowing for fine-grained control and streamlined development. They enhance the expressiveness and versatility of TypeScript for handling diverse data types and scenarios.
+
+
+```
+
+type USAddress = {
+    street: string;
+    state: string
+}
+
+type CanadianAddress = {
+    street: string,
+    province: string
+}
+
+// Union Type
+type Address = USAddress | CanadianAddress;
+
+// You can define the object with either of the object and property markup as the types included in the union type
+const Address:Address = {
+   street = 'street',
+   state = 'state' 
+}
+
+```
+
+
+Converting jsx to tsx functional component:
+
+
+###### JSX Functional Component
+
+```
+
+import './search-box.styles.css';
+
+const SearchBox = ({ className, placeholder, onChangeHandler }) => (
+  <input
+    className={`search-box ${className}`}
+    type='search'
+    placeholder={placeholder}
+    onChange={onChangeHandler}
+  />
+);
+
+export default SearchBox;
+
+```
+
+
+##### TSX Functional Component
+
+```
+
+import { ChangeEvent } from 'react';
+
+import 'search-box.styles.css';
+
+type SearchBoxProps = {
+  className: string;
+  placeholder?: string;
+  onChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
+};
+
+const SearchBox = ({
+  className,
+  placeholder,
+  onChangeHandler,
+}: SearchBoxProps) => (
+  <input
+    className={`search-box ${className}`}
+    type='search'
+    placeholder={placeholder}
+    onChange={onChangeHandler}
+  />
+);
+
+export default SearchBox;
+
+```
+
+
+The onChangeHandler is a function signature or type definition in TypeScript. Let's break it down:
+
+(event: ChangeEvent<HTMLInputElement>): This part specifies the function parameter event and its type. It indicates that the parameter is an event object of type ChangeEvent which is specifically tailored for HTML input elements (<input>). The ChangeEvent type is typically provided by libraries like React or by the TypeScript DOM typings.
+
+=> void: This part denotes the return type of the function. In this case, void indicates that the function does not return any value.
+
+Combining all the parts together, the onChangeHandler function is expected to receive an event of type ChangeEvent<HTMLInputElement> (representing an input change event) and does not return anything (void). Typically, this kind of function is used as an event handler for the onChange event of an HTML input element, allowing you to perform specific actions or logic when the input value changes.
+
+
+
+
+```
+
+    onChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
+
+```
+
+##### Thirdparty APIs
+
+When working with thirdparty APIs we want to type our API call function.
+
+In order to safegaurd our app from any changes made to the third party API that it returns.
+
+We wanna create a generic function to prevent these errors
+
+```
+
+export const getData = async <T>(url:string): Promise<T> => {
+  const response = await fetch(url);
+  return await response.json();  
+}
+
+
+```
+
+Typing Use State:
+
+```
+
+const [monsters, setMonsters] = useState<Monster[]>([]);
+
+```
+
+Consuming the generic api call:
+
+```
+ const users = await getData<Monster[]>(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+      setMonsters(users);
+
+```
+
+
+
+##### Generics
+
+Generics in TypeScript enable the creation of reusable components and functions that can work with different types. They allow for the parameterization of types, enabling flexibility, type safety, and the ability to create generic classes, interfaces, and functions that adapt to various data types.
+
+We want the return type to be an Promise<T> generic T typed paramater.
+
+It normally starts with T then S then R etc for generics...
+
+
+
+
+
+##### TypeScript Inferance
+
+TypeScript inference is the process by which the TypeScript compiler automatically determines the type of a variable or expression based on its usage and context. It analyzes the code and infers the most appropriate type, reducing the need for explicit type annotations and enabling more concise and readable code.
+
+##### Create React App Tip
+
+
+If a file extension is js it will attempt to see if the file is returning jsx to convert it to jsx however I am not sure if this will work with vite build server.
 
 
 

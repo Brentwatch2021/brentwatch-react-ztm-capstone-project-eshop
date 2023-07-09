@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import CategoriesPreview from '../categories-preview/categories-preview.component';
 import Category from '../category/category.component';
 
@@ -7,6 +7,9 @@ import './shop.styles.scss';
 import { useEffect } from 'react';
 import { getCategoriesAndDocumentsForReduxSelector } from '../../utils/firebase/firebase.utils';
 import { fetchCategoriesStartAsync, setCategories } from '../../store/categories/category.action'
+import { fetchCategoriesStart } from '../../store/categories/categoriesSlice'
+import redux_toolkit_store from '../../store/redux_toolkit_store';
+
 const Shop = () => {
   const dispatch = useDispatch();
 
@@ -18,16 +21,19 @@ const Shop = () => {
 
     //getCategoriesMap();
     dispatch(fetchCategoriesStartAsync())
+    //dispatch(fetchCategoriesStart());
 
   },[]);
 
 
 
   return (
+    
     <Routes>
-      <Route index element={<CategoriesPreview />} />
-      <Route path=':category' element={<Category />} />
+        <Route index element={<CategoriesPreview />} />
+        <Route path=':category' element={<Category />} />
     </Routes>
+    
    );
 };
 

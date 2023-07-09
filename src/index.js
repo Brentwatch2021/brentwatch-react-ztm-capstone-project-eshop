@@ -8,17 +8,28 @@ import { BrowserRouter } from 'react-router-dom'
 import { CartProvider } from './contexts/cart.context';
 import { CategoriesProvider } from './contexts/categories.context';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
-
+import { persistor, store } from './store/store';
+import redux_toolkit_store from './store/redux_toolkit_store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Elements } from '@stripe/react-stripe-js'
+import { stripePromise } from './utils/stripe/stripe.utils';
 
 ReactDOM.render(
   <React.StrictMode>
     {/* Loading can be loading sign when state is loading before rehydrating the app */}
-    <Provider loading={null} store={store}>
+    <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      {/* By having two stores the entire app crashes TODO Investigate */}
+    {/* <Provider store={redux_toolkit_store}> */}
     <BrowserRouter>
+      {/* Stripe Elements */}
+      <Elements stripe={stripePromise}>
         <App />
+      </Elements>
     </BrowserRouter>
+    </PersistGate>
     </Provider>
+    {/* </Provider> */}
   </React.StrictMode>,
   document.getElementById('root')
 );
