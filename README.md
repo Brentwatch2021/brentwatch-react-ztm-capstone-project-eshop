@@ -1169,6 +1169,8 @@ create-react-app by default allows us to use the .env file for enviroment variab
 
 in order to setup the server functions you need to add a folder to the root of your project like below:
 
+Netlify functions run on AWS Lambda with a node js enviroment and they allow a limited 10 second runtime
+
 
 ![Serverless Functions](src/netlify_route.jpg)
 

@@ -14,18 +14,22 @@ const PaymentForm = () =>
             return;
         }
 
-        // const response = await fetch('/.netlify/functions/create-payment-intent',{
-        //     method: 'post',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({ amount: 10000 })
-        // }).then(res => res.json())
-        // .catch(error => console.log(error));
+        const response = await fetch('/.netlify/functions/create-payment-intent',{
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: 10000 })
+        }).then(res => res.json())
+        .catch(error => console.log(error));
         
         // client secret links is used for the payment to link the intent to the 
         // payment
-        //const { paymentIntent: {client_secret} } = response;
+        const { paymentIntent: {client_secret} } = response;
+        if(client_secret)
+        {
+            alert(client_secret);
+        }
 
 
         // TODO Need to fix not going through 
