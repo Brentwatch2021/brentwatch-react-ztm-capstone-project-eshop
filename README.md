@@ -1171,6 +1171,9 @@ in order to setup the server functions you need to add a folder to the root of y
 
 Netlify functions run on AWS Lambda with a node js enviroment and they allow a limited 10 second runtime
 
+When you want to add modules to use in the netlify function you must install them to the same root 
+package json as the project
+
 
 ![Serverless Functions](src/netlify_route.jpg)
 
