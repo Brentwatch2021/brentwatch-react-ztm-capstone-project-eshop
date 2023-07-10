@@ -1341,6 +1341,11 @@ n TypeScript, however, there is a difference. The lowercase string represents th
 
 Installing TypeScript:
 
+When working with react 17
+
+use npm install typescript@4
+
+
 ```
 
 npm install typescript @types/node @types/react @types/react-dom @types/jest
