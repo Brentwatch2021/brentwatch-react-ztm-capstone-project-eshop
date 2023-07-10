@@ -26,7 +26,7 @@
     "sass": "^1.63.6",
     "stripe": "^12.12.0",
     "styled-components": "^6.0.2",
-    "typescript": "^5.1.6",
+    "typescript": "^4.9.5",
     "web-vitals": "2.1.4"
   },
   "scripts": {
