@@ -26,6 +26,6 @@ const categoriesSlice = createSlice({
     },
 });
 
-export const { fetchCategoriesStart,fetchCategoriesSuccess,fetchCategoriesFailed } = categoriesSlice.actions;
+//export const { fetchCategoriesStart,fetchCategoriesSuccess,fetchCategoriesFailed } = categoriesSlice.actions;
 
 export default categoriesSlice;

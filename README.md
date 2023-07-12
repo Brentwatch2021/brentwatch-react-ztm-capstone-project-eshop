@@ -1577,6 +1577,149 @@ If a file extension is js it will attempt to see if the file is returning jsx to
 
 
 
+##### Typing Out Redux
+
+if you want to overload functions in Typescript they must have the same amount of paramaters.
+
+```
+
+
+```
+
+This is an example of a discrimnary union type
+// action = {} as CategoryAction
+
+This allows the reducer to respond to the Category Action union type
+
+
+##### Type guards 
+
+Type guards in TypeScript are conditional checks or functions that narrow down the type of a value at compile-time, enabling safer access to properties and methods specific to that narrowed type.
+
+
+The reason we need to implement the typeGaurds is becuase this reducer 
+
+
+```
+
+export const categoriesReducer = (state = CATEGORIES_INITIAL_STATE,
+     action = {} as CategoryAction) =>
+{
+    // At this point the action type is Action however
+    // if leave the destructring once it hits its desired 
+    // function below it will be of type with or without action type
+    //const { type, payload } = action;
+
+    switch(action.type) {
+        case CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START:
+            return { ...state, isLoading: true }
+        case CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_SUCCESS:
+            return { ...state,isLoading:false, categories: action.payload }
+        case CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_FAILED:
+            return { ...state, isLoading: false, error: action.payload}
+        default:
+            return state;
+    }
+}
+
+
+```
+
+Assumes that the only type action coming through is a CategoryAction but this is not true with REDUX all reducers get dispatched
+so therefore we need to implement some kind of typeguard when introducing other reducers
+
+
+
+Intersection Types:
+
+Intersection types in TypeScript allow you to combine multiple types into a single type, creating a new type that includes all the properties and methods from each constituent type. An intersection type is denoted by using the & operator between the types
+
+And it can be used with interfaces and types
+
+```
+
+interface A {
+  propA: string;
+}
+
+interface B {
+  propB: number;
+}
+
+type AB = A & B;
+
+const obj: AB = {
+  propA: "Hello",
+  propB: 42,
+};
+
+```
+
+Casting example: using the as keyword
+
+```
+
+return querySnapshot.docs.map((docSnapshot) => docSnapshot.data() as Category);
+
+```
+
+
+Typing out async functions with promise return types
+
+```
+
+ getCurrentUser = (): Promise<User | null> =>
+
+```
+
+Return Type:
+
+Returns the return type of a function in TypeScript.
+
+###### Readonly in TypeScript
+
+In TypeScript, the readonly modifier is used to indicate that a property or an array element cannot be modified once it is assigned a value. This modifier can be applied to properties in interfaces, classes, or array types. Making it Immmutable.
+
+```
+
+export type CartState = {
+  readonly isCartOpen:boolean;
+  readonly cartItems: CartItem[],
+};
+
+```
+
+Typescript will prevent any direct assignment to each property
+
+![Not Allowing a change to state](src/readonly.jpg)
+
+
+Some third party Libraries Modules etc will, have a separate types library basicly a typed version of the npm that you would need to install.
+
+In future when importing components rather import like this to prevent any issues when you miggrate from js to ts files
+
+```
+import { selectCurrentUser } from '../../store/user/user.selector';
+
+```
+
+
+##### Javasript tip
+
+Object.assign is a built-in function in JavaScript that is often used to copy or merge properties from multiple source objects into a target object. It allows you to create a new object by combining the properties of one or more source objects.
+
+Here's an example of using Object.assign:
+
+javascript
+Copy code
+const target = { a: 1 };
+const source = { b: 2, c: 3 };
+
+const merged = Object.assign(target, source);
+
+console.log(merged);
+// Output: { a: 1, b: 2, c: 3 }
+
 
 
 

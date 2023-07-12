@@ -2,16 +2,16 @@ import { Link, Outlet } from 'react-router-dom';
 import './navigation-bar.styles.jsx'
 import { Fragment, useContext } from 'react';
 import { ReactComponent as CrwnLogo } from '../../assets/crown.svg'
-import { UserContext } from '../../contexts/user.context.jsx';
-import { signOutUser } from '../../utils/firebase/firebase.utils.js';
+//import { UserContext } from '../../contexts/user.context.jsx';
+import { signOutUser } from '../../utils/firebase/firebase.utils';
 import CartIcon from '../../components/cart-icon/cart-icon.component.jsx';
 import CartDropDown from '../../components/cart-drop-down/cart-drop-down.component.jsx';
-import { CartContext } from '../../contexts/cart.context.jsx';
+//import { CartContext } from '../../contexts/cart.context.jsx';
 import { LogoContainer, NavLink, NavLinks, NavigationContainer } from './navigation-bar.styles.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../store/user/user.selector.js';
-import { selectIsCartOpen } from '../../store/cart/cart.selector.js';
-import { signOutStart } from '../../store/user/user.action.js';
+import { selectCurrentUser } from '../../store/user/user.selector';
+import { selectIsCartOpen } from '../../store/cart/cart.selector';
+import { signOutStart } from '../../store/user/user.action';
 
 const NavigationBar = () => {
     // This will caus a rerender when 

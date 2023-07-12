@@ -1,16 +1,31 @@
-import { compose, createStore, applyMiddleware} from 'redux';
+import { compose, createStore, applyMiddleware, Middleware} from 'redux';
 //import logger from 'redux-logger';
 import { rootReducer } from './root-reducer';
 import storage from 'redux-persist/lib/storage'
-import { persistReducer, persistStore } from 'redux-persist'
+import { PersistConfig, persistReducer, persistStore } from 'redux-persist'
 import thunk from 'redux-thunk';
 
 import createSagaMiddleware from 'redux-saga'
 import { rootSaga } from './root-saga'
 
+
+
+export type RootState = ReturnType<typeof rootReducer>
+
+declare global {
+  interface Window {
+    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
+  }
+}
+
+type ExtendedPersistConfig = PersistConfig<RootState> & {
+  whitelist: (keyof RootState)[];
+}
+
 const sagaMiddleware = createSagaMiddleware();
 
-const loggerMiddleware = (store) => (next) => (action) => {
+// This is not good practise however I need to move on with the course
+const loggerMiddleware = (store:any) => (next:any) => (action:any) => {
     if(!action.type)
     {
         return next(action);
@@ -49,7 +64,10 @@ const composeEnhancer =
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 // There is more middlewares to apply for now we just using this one
-const middleWares = [process.env.NODE_ENV === 'development' && loggerMiddleware, thunk, sagaMiddleware].filter(Boolean);
+const middleWares = [
+  process.env.NODE_ENV !== 'production' && loggerMiddleware,
+  sagaMiddleware,
+].filter((middleware): middleware is Middleware => Boolean(middleware));
 
 const composedEnhancers = composeEnhancer(applyMiddleware(...middleWares));
 

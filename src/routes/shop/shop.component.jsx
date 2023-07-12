@@ -5,10 +5,10 @@ import Category from '../category/category.component';
 
 import './shop.styles.scss';
 import { useEffect } from 'react';
-import { getCategoriesAndDocumentsForReduxSelector } from '../../utils/firebase/firebase.utils';
-import { fetchCategoriesStartAsync, setCategories } from '../../store/categories/category.action'
-import { fetchCategoriesStart } from '../../store/categories/categoriesSlice'
-import redux_toolkit_store from '../../store/redux_toolkit_store';
+//import { getCategoriesAndDocumentsForReduxSelector } from '../../utils/firebase/firebase.utils';
+import { fetchCategoriesStart } from '../../store/categories/category.action'
+//import { fetchCategoriesStart } from '../../store/categories/categoriesSlice'
+//import redux_toolkit_store from '../../store/redux_toolkit_store';
 
 const Shop = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const Shop = () => {
     //};
 
     //getCategoriesMap();
-    dispatch(fetchCategoriesStartAsync())
+    dispatch(fetchCategoriesStart())
     //dispatch(fetchCategoriesStart());
 
   },[]);

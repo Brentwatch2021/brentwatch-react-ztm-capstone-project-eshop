@@ -7,11 +7,18 @@ import { getAuth,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    User,
+    NextOrObserver,
     
    } 
     from 'firebase/auth'
 
-import { getFirestore,doc,getDoc,setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore'
+import { getFirestore,doc,getDoc,setDoc, collection, writeBatch, query, getDocs, QueryDocumentSnapshot } from 'firebase/firestore'
+import { Category } from '../../store/categories/category.types';
+
+
+
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyBSqq-8DmKrICPt3ZPYLuxsgXNibWE90gw",
@@ -42,18 +49,20 @@ const firebaseConfig = {
     signInWithRedirect(auth,googleprovider)
   }
 
-
   // this method by default gets the db assoicated with the 
   // firebase/app instance 
   export const db = getFirestore();
 
+  type ObjectToAdd = {
+    title: string;
+  }
 
   // The first way with allowing a field attribute it will allow to 
   // dynamically set a new field name
   //export const addCollectionAndDocuments = async (collectionKey,objectsToAdd,field) => {
 
   // However for now we only want to set it as title
-  export const addCollectionAndDocuments = async (collectionKey,objectsToAdd) => {
+  export const addCollectionAndDocuments = async <T extends ObjectToAdd>(collectionKey:string,objectsToAdd:T[]):Promise<void> => {
     const collectionRef = collection(db, collectionKey);
     const batch = writeBatch(db);
 
@@ -69,29 +78,28 @@ const firebaseConfig = {
     console.log('batch commit complete');
   }
 
-  export const getCategoriesAndDocuments = async () => {
+  export const getCategoriesAndDocumentsForReduxSelector = async (): Promise<Category[]> => {
     const collectionRef = collection(db,'categories');
     const q = query(collectionRef);
 
     const querySnapshot = await getDocs(q);
-    const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-      const { title, items } = docSnapshot.data();
-      acc[title.toLowerCase()] = items;
-      return acc; 
-    },{});
-
-    return categoryMap;
+    const categories = querySnapshot.docs.map((docSnapshot) => docSnapshot.data() as Category)
+    return categories;
   }
 
-  export const getCategoriesAndDocumentsForReduxSelector = async () => {
-    const collectionRef = collection(db,'categories');
-    const q = query(collectionRef);
+  export type UserData = {
+    createdAt: Date;
+    displayName: string;
+    email: string;
+    photoURL:string;
+  };
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
-  }
+  export type AdditionalInformation = {
+    displayName?: string;
+  };
 
-  export const createUserDocumentFromAuth = async (userAuth,additonalInformation = {}) => {
+  export const createUserDocumentFromAuth = async (userAuth:User,additonalInformation = {} as AdditionalInformation)
+  :Promise<QueryDocumentSnapshot<UserData> | void> => {
 
     if(!userAuth) return;
     // Even though the users collection does not exist 
@@ -117,6 +125,7 @@ const firebaseConfig = {
             ...additonalInformation
           });
       }
+      // Unable to know which type it will be
       catch(error)
       {
         console.log(`Error creating user from Google Sign In ${error}`)
@@ -124,17 +133,17 @@ const firebaseConfig = {
     }
     //return userDocRef; 
     // change for user saga
-    return userSnapshot;
+    return userSnapshot as QueryDocumentSnapshot<UserData>;
   }
 
 
-  export const createAuthUserWithEmailAndPassword = async (email,password) => {
+  export const createAuthUserWithEmailAndPassword = async (email:string,password:string) => {
     if(!email || !password) return;
     
     return await createUserWithEmailAndPassword(auth, email,password);
   }
 
-  export const signInAuthUserWithEmailAndPassword = async (email,password) => {
+  export const signInAuthUserWithEmailAndPassword = async (email:string,password:string) => {
     if(!email || !password) return;
     
     return await signInWithEmailAndPassword(auth,email,password);
@@ -142,9 +151,10 @@ const firebaseConfig = {
 
   export const signOutUser = async () => await signOut(auth);
 
-  export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth,callback)
+  // The callback is typed from firebase
+  export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth,callback)
 
-  export const getCurrentUser = () => 
+  export const getCurrentUser = (): Promise<User | null> => 
   {
     return new Promise((resolve, reject) => {
       const unsubscribe = onAuthStateChanged(auth,(userAuth) => {
@@ -155,5 +165,7 @@ const firebaseConfig = {
       )
     });
   }
+
+  
 
 
