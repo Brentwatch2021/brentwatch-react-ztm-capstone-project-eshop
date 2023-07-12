@@ -1704,6 +1704,14 @@ import { selectCurrentUser } from '../../store/user/user.selector';
 ```
 
 
+##### Typing the Redux Sagas
+
+```
+
+npm install typed-redux-saga
+
+```
+
 ##### Javasript tip
 
 Object.assign is a built-in function in JavaScript that is often used to copy or merge properties from multiple source objects into a target object. It allows you to create a new object by combining the properties of one or more source objects.

@@ -1,5 +1,5 @@
 import { compose, createStore, applyMiddleware, Middleware} from 'redux';
-//import logger from 'redux-logger';
+import { loggerMiddleware } from './middleware/logger';
 import { rootReducer } from './root-reducer';
 import storage from 'redux-persist/lib/storage'
 import { PersistConfig, persistReducer, persistStore } from 'redux-persist'
@@ -24,23 +24,8 @@ type ExtendedPersistConfig = PersistConfig<RootState> & {
 
 const sagaMiddleware = createSagaMiddleware();
 
-// This is not good practise however I need to move on with the course
-const loggerMiddleware = (store:any) => (next:any) => (action:any) => {
-    if(!action.type)
-    {
-        return next(action);
-    }
-
-    console.log('type: ', action.type);
-    console.log('payload: ', action.payload);
-    //console.log('currentState: ', action.getState());
 
 
-    next(action);
-
-    console.log('next state: ', store.getState());
-
-}
 
 // const persistConfig = {
 //     key: 'root',
