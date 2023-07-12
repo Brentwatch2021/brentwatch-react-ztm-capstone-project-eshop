@@ -1712,6 +1712,11 @@ npm install typed-redux-saga
 
 ```
 
+We also need to include a macro for Babel
+
+npm install babel --dev
+
+
 ##### Javasript tip
 
 Object.assign is a built-in function in JavaScript that is often used to copy or merge properties from multiple source objects into a target object. It allows you to create a new object by combining the properties of one or more source objects.
