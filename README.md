@@ -1714,7 +1714,21 @@ npm install typed-redux-saga
 
 We also need to include a macro for Babel
 
-npm install babel --dev
+npm install babel --dev babel-plugin-macros
+
+If you see such an error when migrating your sagas over to TS
+
+![Generator Issues](src/TypedSagaGeneratorIssue.jpg)
+
+This issue is not todo specifically with sagas itself but more with generator functions because with generator functions the return type is never always going to return the same type and their could be many yields in one generator function.
+
+If you facing this issue try adding the:
+
+"downlevelIteration": false,
+
+to your tsconfig file and if the error does not disappear try restarting
+
+
 
 
 ##### Javasript tip

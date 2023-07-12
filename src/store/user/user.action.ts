@@ -7,7 +7,7 @@ import { AdditionalInformation, UserData } from '../../utils/firebase/firebase.u
 // ACTION RETURN TYPES
 export type CheckUserSession = Action<USER_ACTION_TYPES.CHECK_USER_SESSION>
 
-export type EmailSignInStart = Action<USER_ACTION_TYPES.EMAIL_SIGN_IN_START>
+export type EmailSignInStart = ActionWithPayload<USER_ACTION_TYPES.EMAIL_SIGN_IN_START,{email:string,password:string}>
 
 export type GoogleSignInStart = Action<USER_ACTION_TYPES.GOOGLE_SIGN_IN_START>
 
@@ -37,7 +37,7 @@ export const emailSignInStart = withMatcher((email: string, password: string):Em
 export const googleSignInStart = withMatcher(():GoogleSignInStart => 
         createAction(USER_ACTION_TYPES.GOOGLE_SIGN_IN_START));
 
-export const signInSuccess = withMatcher((user: UserData):SignInSuccess =>
+export const signInSuccess = withMatcher((user: UserData & { id:string }):SignInSuccess =>
         createAction(USER_ACTION_TYPES.SIGN_IN_SUCCESS, user));
 
 export const signInFailed = withMatcher((error: Error):SignInFailed =>
