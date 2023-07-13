@@ -1729,7 +1729,14 @@ If you facing this issue try adding the:
 to your tsconfig file and if the error does not disappear try restarting
 
 
+##### Styled Components Types
 
+
+```
+
+npm install @types/styled-components
+
+```
 
 ##### Javasript tip
 
