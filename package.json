@@ -31,7 +31,7 @@
     "reselect": "^4.1.8",
     "sass": "^1.63.6",
     "stripe": "^12.12.0",
-    "styled-components": "^6.0.2",
+    "styled-components": "^5.3.3",
     "typed-redux-saga": "^1.5.0",
     "typescript": "^4.9.5",
     "web-vitals": "2.1.4"

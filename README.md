@@ -1738,6 +1738,151 @@ npm install @types/styled-components
 
 ```
 
+When working with styled components and using the typing you might encounter the follwing 
+issue:
+
+![Styled Component Type Issues Issues](src/styledcompTypedError.jpg)
+
+rather use a the styled-components version 5.3.3
+
+This issue needs to be further investigated I am not sure if its due to us using react 17 and trying to use the latest styled components need to invetigate further.
+
+
+Typing out form input elements:
+
+```
+
+type FormInputProps = { label: string } & InputHTMLAttributes<HTMLInputElement>;
+
+
+const FormInput:FC<FormInputProps> = ({ label, ...otherProps}) => 
+
+```
+
+When typing out component return types you can use the following strategy for its children input and the input props:
+
+```
+
+ export type ButtonProps = {
+    buttonType?: BUTTON_TYPE_CLASSES;
+    isLoading?: boolean;
+  } & ButtonHTMLAttributes<HTMLButtonElement>;
+  
+  const Button: FC<ButtonProps> = ({
+    children,
+    buttonType,
+    isLoading,
+    ...otherProps
+  }) => 
+
+```
+
+
+and for styled component props:
+
+```
+type FormInputLabelProps = {
+  shrink?:boolean;
+}
+
+
+export const FormInputLabel = styled.label<FormInputLabelProps>`
+      color: ${subColor};
+      font-size: 16px;
+      font-weight: normal;
+      position: absolute;
+      pointer-events: none;
+      left: 5px;
+      top: 10px;
+      transition: 300ms ease all;
+      ${({ shrink }) => shrink && shrinkLabelStyles};
+`
+
+```
+
+When typing out a component when using a svg and you encounter this error:
+
+![Not Typing out SVG Component](src/TypeSvgError.jpg)
+
+
+Step 1:
+
+Create a custom.d.ts file:
+
+
+```
+
+declare module '*.svg' {
+  import React = require('react');
+  export const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
+  const src: string;
+  export default src;
+}
+
+```
+
+add it to the ts config and the error should disappear 
+
+When you use an external library in TypeScript, you typically import the library using an import statement. However, if the library doesn't have TypeScript declarations (.d.ts files) or if you want to add additional type information for the library, you can use the declare module statement to define the types yourself.
+
+
+When working with typed properties for Functional Components you want to type it out in the following way
+
+
+```
+
+const CartItem:FC<CartItemProps> = ({cartItem}) => {
+    const { name , quantity,imageUrl,price } = cartItem;}
+
+```
+
+In the code you provided, you are declaring a functional component named CartItem with the type annotation FC<CartItemProps>. The component receives the cartItem prop, and inside the component, you are using object destructuring to extract the name, quantity, imageUrl, and price properties from the cartItem object.
+
+
+When working with a component that can accept other properties you can use the following method:
+
+by using intersection types.
+
+```
+
+type FormInputProps = { label: string } & InputHTMLAttributes<HTMLInputElement>;
+
+
+const FormInput:FC<FormInputProps> = ({ label, ...otherProps})
+
+```
+
+If you wanna type the type the change event on a component you can do the following
+
+```
+
+const handleChange = (event:ChangeEvent<HTMLInputElement>) => 
+
+```
+
+and you are able to select what type of element the change occured on
+
+
+```
+
+const { category } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
+
+```
+
+useParams is a hook provided by React Router that allows you to access the parameters from the current URL.
+keyof CategoryRouteParams is a TypeScript construct that represents the union of all keys (property names) in the CategoryRouteParams type. It essentially provides the list of possible parameter keys.
+as CategoryRouteParams is a type assertion in TypeScript, which tells the compiler to treat the result of useParams as an object of type CategoryRouteParams.
+Assuming you have defined the CategoryRouteParams type somewhere in your code, this line of code retrieves the URL parameters using useParams and ensures that the returned object adheres to the CategoryRouteParams type.
+
+
+
+
+
+
+
+
+
+
 ##### Javasript tip
 
 Object.assign is a built-in function in JavaScript that is often used to copy or merge properties from multiple source objects into a target object. It allows you to create a new object by combining the properties of one or more source objects.
@@ -1753,6 +1898,10 @@ const merged = Object.assign(target, source);
 
 console.log(merged);
 // Output: { a: 1, b: 2, c: 3 }
+
+
+
+
 
 
 

@@ -11,6 +11,14 @@ export type CategoryItem = {
     price: number;
 }
 
+export type DirectoryCategory =
+{
+    id: number;
+    title: string;
+    imageUrl: string;
+    route: string;
+}
+
 export type Category = 
 {
     title: string;
