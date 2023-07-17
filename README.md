@@ -1899,6 +1899,178 @@ const merged = Object.assign(target, source);
 console.log(merged);
 // Output: { a: 1, b: 2, c: 3 }
 
+##### Performance Optimization
+
+
+```
+
+const submitHandler = () => {
+  ...
+
+}
+
+```
+
+
+Each time react rerenders it reinitialieses this code so in order to prevent that we can use the 
+useCallback hook from react to prevent any reinits occuring:
+
+##### UseCallback
+
+
+```
+const increment = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, [variableTowatch]);
+
+```
+
+The above method works much the same as a useEffect no changes on the function attributes then it will remain the same. However if there is a change in the var it will reninit.
+
+Dont define large convulated functions.
+
+When adding the item in the dependancy array you basicly saying you expect a change to the callback.
+
+
+##### UseMemo
+
+useMemo is useful when you have a costly computation or a heavy calculation that you want to perform only when necessary.
+
+much the same as useCallback but useMemo memorises the return value and can also be used:
+
+```
+
+ const sum = useMemo(() => {
+    console.log('Calculating sum...');
+    return a + b;
+  }, [a, b]);
+
+```
+
+##### Performance Optimisation
+
+In order to prevent any unneccessary rerenders you can investigate by using the React Dev Tools Profiler
+
+Install the React Dev Tools for chrome 
+
+and open the developer tools and goto the profiler tab click the round button and execute your user journey 
+
+User journey:
+
+Open Cart:
+
+Add three brown hats 
+Add five red beanies 
+Add 1 Blue hat
+
+Once completed with your user journey click the round button to end the recording.
+
+You will be able to navigate your way through the flame graph. The grey areas indicate the components which did not render and the blue and yellow are the areas that did.
+
+
+![FlameGraph](src/renderedCartItemProfiler.jpg)
+
+
+and on the right hand side you will see the name of the component and a timeline which shows timestamps for each time the item is rendered in this case its 9 times for the cart item as that is the number of cart items that was added but it should not be rendering each item over and over when some items are have not changed at all.
+
+![Component Times Stamps](src/CartItemBeenReRendered.jpg)
+
+
+Now in order to solve the rerendering issue we can use the memo function from react:
+
+```
+import {react, memo} from 'react'
+
+const CartItem:FC<CartItemProps> = memo(({cartItem}) => {
+    const { name , quantity,imageUrl,price } = cartItem;
+    return (
+        <CartItemContainer>
+            <img src={imageUrl} alt={name} />
+            <ItemDetails>
+                <span className="name">{name}</span>
+                <span className="price">
+                    {quantity} x ${price}
+                </span>
+            </ItemDetails>
+        </CartItemContainer>
+    );
+})
+
+```
+
+In the image below you will notice now with the change to the code it only renders three times it is each time a new quantity of the same cart item is added:
+
+![1st cart item](src/1stCartItem.jpg)
+
+
+Breaking a component into smaller pieces is a common technique in React to optimize performance and prevent unnecessary re-rendering of large portions of the UI.
+
+When a component's state or props change, React will re-render that component and all of its child components. If a component has a large tree of child components, a change in state or props at the top level can trigger re-rendering of the entire subtree, even if only a small portion of it actually needs to be updated.
+
+
+Now if you look at the item rendered at 4 which is a new item you will notice its greyed out meaning its not been rerendered.
+
+![Improvement](src/improvement.jpg)
+
+
+###### Code Splitting lazy and Suspense
+
+
+
+In order to improve load time and provide global spinner do the following:
+
+
+```
+
+import { Routes,Route } from "react-router-dom";
+
+
+import { useDispatch } from "react-redux";
+import { useEffect,Suspense,lazy } from "react";
+import { checkUserSession } from "./store/user/user.action";
+import Spinner from "./components/spinner/spinner.component";
+
+const  Home = lazy(() => import("./routes/home/home.component"));
+const NavigationBar = lazy(() => import("./routes/navigation-bar/navigation-bar.component"));
+const Authentication = lazy(() => import("./routes/authentication/authentication.component"));
+const Shop = lazy(() => import("./routes/shop/shop.component"));
+const Checkout = lazy(() => import("./routes/checkout/checkout.component"));
+
+const App = () => { 
+  const dispatch = useDispatch();
+  useEffect(()=> {
+      dispatch(checkUserSession());
+  },[])
+
+  return (
+    <Suspense fallback={<Spinner/>}>
+    <Routes>
+      <Route path="/" element={<NavigationBar/>}>
+        <Route index element={<Home/>}/>
+        <Route path="shop/*" element={<Shop/>}/>
+        <Route path="auth" element={<Authentication/>}/>
+        <Route path="checkout" element={<Checkout/>}/>
+      </Route>
+    </Routes>
+    </Suspense>
+  );
+};
+
+export default App;
+
+
+
+```
+
+
+
+
+![Imporovement](src/bundleSizeImprovement.jpg)
+
+
+
+
+
 
 
 
