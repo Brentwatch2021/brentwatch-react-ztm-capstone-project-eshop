@@ -7,6 +7,7 @@ const Authentication = () =>
     return (
         <MainSignInContainer>
             <SignInForm/>
+            <br/>
             <SignUpForm/>
         </MainSignInContainer>
     );

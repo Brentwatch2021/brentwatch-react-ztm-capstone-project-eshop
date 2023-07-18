@@ -2266,6 +2266,47 @@ If you would like a free SSL certificate you can use [Lets Encrypt](https://lets
 This is a Diagram that represents the flow of a PWA with a service Worker
 
 
+![Service Worker Workflow](src/ServiceWorkerDiagram.jpg)
+
+
+
+If you would like to implement a service worker in a react app you can follow this github Repo:
+
+
+[Service Worker Integration](https://github.com/jeffposnick/create-react-pwa/compare/starting-point...pwa)
+
+
+1. In a new and separate directory from our current project, generate a new CRA react app with the service worker template:
+
+npx create-react-app my-app --template cra-template-pwa
+
+2. Copy the service-worker.js and serviceWorkerRegistration.js file from the new created app and add it into our client/src directory.
+
+
+![Service Worker Workbox Files](src/ServiceWorkerIntegration.jpg)
+
+
+3. Copy the all the "workbox-*" dependencies from the package.json file in the dependencies section and add it into our client folders package.json dependencies. Then re-install your packages using yarn or npm depending on whichever package manager you have been using up to this point!
+
+
+4. Update the index.js
+
+```
+import * as ServiceWorkerRegistration from './serviceWorkerRegistration'
+ServiceWorkerRegistration.register();
+
+```
+
+5. npm run build
+
+6. npm install -g serve
+
+7. serve -s build
+
+8. Run the url in a incognito browser to prevent caching and use lighthouse within the dev tools tabs to get the PWA report from lighthouse
+
+
+
 
 
 

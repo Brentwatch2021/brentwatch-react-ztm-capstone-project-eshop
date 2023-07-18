@@ -1,12 +1,17 @@
 import styled from 'styled-components';
 
 export const CheckoutContainer = styled.div`
-  width: 55%;
+  
   min-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 50px auto 0;
+  padding:10px
+
+  @media screen and (max-width:400px)
+  {
+    width:100%
+  }
 `;
 
 export const CheckoutHeader = styled.div`
@@ -15,6 +20,10 @@ export const CheckoutHeader = styled.div`
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid darkgrey;
+  @media screen and (max-width:600px)
+  {
+    width:100%
+  }
 `;
 
 export const HeaderBlock = styled.div`
@@ -23,6 +32,14 @@ export const HeaderBlock = styled.div`
 
   &:last-child {
     width: 8%;
+  }
+
+  @media screen and (max-width: 600px)
+  {
+    
+    &:last-child {
+      width: 0%;
+    }
   }
 `;
 
