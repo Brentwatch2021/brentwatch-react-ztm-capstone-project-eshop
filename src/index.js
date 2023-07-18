@@ -4,12 +4,8 @@ import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom'
-// import { UserProvider } from './contexts/user.context';
-import { CartProvider } from './contexts/cart.context';
-import { CategoriesProvider } from './contexts/categories.context';
 import { Provider } from 'react-redux';
 import { persistor, store } from './store/store';
-import redux_toolkit_store from './store/redux_toolkit_store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Elements } from '@stripe/react-stripe-js'
 import { stripePromise } from './utils/stripe/stripe.utils';

@@ -1874,15 +1874,6 @@ keyof CategoryRouteParams is a TypeScript construct that represents the union of
 as CategoryRouteParams is a type assertion in TypeScript, which tells the compiler to treat the result of useParams as an object of type CategoryRouteParams.
 Assuming you have defined the CategoryRouteParams type somewhere in your code, this line of code retrieves the URL parameters using useParams and ensures that the returned object adheres to the CategoryRouteParams type.
 
-
-
-
-
-
-
-
-
-
 ##### Javasript tip
 
 Object.assign is a built-in function in JavaScript that is often used to copy or merge properties from multiple source objects into a target object. It allows you to create a new object by combining the properties of one or more source objects.
@@ -2066,6 +2057,214 @@ export default App;
 
 
 ![Imporovement](src/bundleSizeImprovement.jpg)
+
+
+
+
+###### Firebase Rule Security
+
+Each Database in firebase firestore has a set of rules associated with it and you can get to it:
+
+1. Click Firebase Firestore in your project console dashboard links
+2. Click on the rules tab
+
+on the left side you will see the history of the changes made to the rules see below:
+
+![Imporovement](src/Firebase_Rules_History.jpg)
+
+and the rules will be on the right:
+
+![FirebaseRules](FirebaseRules.jpg)
+
+Rules is a series of the match conditions
+
+
+```
+// Version of the firebase store
+rules_version = '2';
+
+// This will match the service running 
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // This allows anyone to read write from any document in the
+    // database
+    match /{document=**} {
+      allow read, write: if true;
+    }
+
+    // If I wanted to prevent specific items from been written 
+    // This allows the user with a specific User ID to 
+    // to write etc to this collection
+    match /[nameOfCollection]/{UserId}
+    {
+      allow read, get, create;
+      allow write: if request.auth!= null && request.auth.uid == userId
+    }
+
+  }
+}
+
+
+```
+
+This will match any database in the firestore and any of the documents
+
+```
+
+match /databases/{database}/documents 
+
+```
+
+and anything within should abide by the following matches:
+
+```
+// Allows anyone to perform the following actions
+allow read, get, create;
+
+```
+
+
+```
+// Allows anyone to perform the following actions
+allow read, get, create;
+
+```
+
+you cannot target collections with match rules /collection only documents:
+
+```
+
+match /categories/{category}{
+  allow read;
+  // request is a global var for the request info which has the 
+    // auth info on it showing which user is connecting must investigate!!
+  allow write if request.auth != null && request.auth.uid === "[UserIDHardcoded]"
+}
+
+```
+
+Is there a way to programmatically to update these rules?
+
+
+To allow all the documents to be read: match /{document=**} (rulesthatapplytoall documents)
+
+[Firebase Rules Documentaion(https://firebase.google.com/docs/firestore/security/get-started)]
+
+[Great Web Firestore Sample practise project(https://firebaseopensource.com/projects/firebase/friendlyeats-web/)]
+
+My Latest rule set:
+
+```
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+    allow read
+      match /users/{userId}{
+      	allow read, get, create;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      match /categories/{category}{
+      	allow read;
+      } 
+    }
+  }
+}
+
+```
+
+
+[ZTM Career Paths(https://zerotomastery.io/career-paths/)]
+
+use this to endorse others skills and get endorsements online.
+
+[Discord Endorsement Server(https://discord.com/channels/423464391791476747/434851345392992277)]
+
+##### React Interview Questions
+
+[List of 200+ React JS Interview Questions(https://github.com/sudheerj/reactjs-interview-questions)]
+
+
+###### PWAs
+
+A Progressive Web App (PWA) is a web application that combines the best features of websites and mobile apps. PWAs are designed to work offline, provide a seamless user experience across different devices, and can be installed directly from the web browser. They offer fast loading times and can send push notifications.
+
+If you would like to know the capabilities of a web app currently today check out: [What web can do today?(https://whatwebcando.today/)]
+
+Use Lighthouse to measure website performance etc using the chrome dev tool: [Lighthouse (https://developer.chrome.com/docs/lighthouse/overview/)]
+
+
+In order to use it just enable the extension and click on it and select generate report from the site you are currently reviewing.
+
+
+Once completed it should provide you with a report as such:
+
+
+![LightHouse Report](src/lighthouseExample.jpg)
+
+
+The three main pillars for the PWA that makes it a PWA is the following:
+
+
+1. Https
+
+2. App Manifest
+
+3. Service Worker
+
+1. HTTPS 
+
+For more tips on what makes a good PWA Check out:  [PWA Checklist](https://web.dev/pwa-checklist/)
+
+
+If you would like a free SSL certificate you can use [Lets Encrypt](https://letsencrypt.org/)
+
+2. App Manifest: 
+
+    An app manifest for Progressive Web Apps (PWAs) is a JSON file that provides essential metadata about the web application. It includes information like the app's name, icons, display mode, background color, and other settings, enabling installation and enhancing the user experience on various devices and platforms.
+
+```
+
+{
+  "short_name": "React App",
+  "name": "Create React App Sample",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
+
+
+```
+
+[A Free Favicon generator](https://realfavicongenerator.net/)
+
+
+
+3. Service Worker
+
+This is a Diagram that represents the flow of a PWA with a service Worker
+
 
 
 
