@@ -2308,6 +2308,1015 @@ ServiceWorkerRegistration.register();
 
 
 
+# Testing
+
+1. Unit Tests: 
+
+Unit tests are tests that verify individual units of code to ensure they perform as intended in isolation.
+
+2. Integration Tests: 
+
+Integration tests verify the interactions and compatibility between different components or modules of a system, ensuring they work correctly together in a combined environment Mobile app connecting to API and then connecting to database.
+
+3. Automation Tests:
+
+ Automation tests are tests that are performed automatically using software tools or frameworks to execute pre-defined test scripts and verify the behavior, functionality, and performance of a system or software application Postman API collection tests etc
+
+4. End to End Tests:
+
+End-to-end tests are comprehensive tests that validate the entire workflow or user journey of a system, simulating real user interactions across multiple components, subsystems, or interfaces to ensure smooth integration and functionality
+
+
+Test Driven Development and Behavior Driven Development
+
+Items required to complete the testing.
+
+1. Test Libraries Aka Scaffolding:
+
+Jest 
+
+Jasmine
+
+Mocha 
+
+Selenium
+
+PlayWright
+
+
+2. Assertion Library - A library to assert variables in the test
+
+
+3. Test runner
+
+
+4. Mock Spies and tests
+
+
+End to End Test Libraries Rnd on what the current market is using and make a selection from there like playwright.
+
+Three ways to to use as test runner:
+
+DOM
+Pupeeter
+JSDOM
+
+[Jest Automation Framework](https://jestjs.io/)
+
+
+
+When working with jest and you running your tests with node and you dont want to specify the file each time.
+
+You can add this to the package.json file to allow any file that has the test attribute to run 
+
+"jest": "jest --watch *.js"
+
+
+Jest has an assertion Library that you can use to expect different values etc.
+
+
+[Jest Assertion Methods](https://jestjs.io/docs/using-matchers)
+
+Here is a over simplified example:
+
+```
+
+it('Google Search is working', () => {
+    expect(googleSearch('dogs',dbMock)).toExist;
+})
+
+it('does not return more than 3 matches ', () => {
+    expect(googleSearch('com',dbMock).length).toEqual(3)
+})
+
+```
+
+Example of using the describe method describing two test suites:
+
+```
+
+describe('googleSearch',() => {
+    it('Google Search is working', () => {
+        expect(googleSearch('dogs',dbMock)).toExist;
+    })
+    
+    it('works with undefined and null input', () => {
+        expect(googleSearch(undefined,dbMock)).toEqual([])
+        expect(googleSearch(null,dbMock)).toEqual([])
+    })
+    
+    it('does not return more than 3 matches ', () => {
+        expect(googleSearch('com',dbMock).length).toEqual(3)
+    })
+    
+})
+
+
+
+describe('googleSearchNull',() => {
+    
+    
+    it('works with undefined and null input', () => {
+        expect(googleSearch(undefined,dbMock)).toEqual([])
+        expect(googleSearch(null,dbMock)).toEqual([])
+    })
+    
+    
+    
+})
+
+```
+
+##### FUN API'S 
+
+1. [Star Wars(http://swapi.py4e.com/api/)]
+2. [Chuck Norris(http://swapi.py4e.com/api/)]
+3. [Numbers (http://numbersapi.com/#42)]
+4. [Pokemon (https://pokeapi.co/)]
+
+
+Making Async calls with jest example:
+
+```
+it('calls swapi to get people', () => {
+    //expect.assertions(number) verifies that a
+    // certain number of assertions are called during a
+    // test. This is often useful when testing asynchronous
+    //code, in order to make sure that assertions in a
+    //callback actually got called.
+    expect.assertions(1)
+    // Just by adding the return keyword jest understands that this 
+    // is a promise and wont pass the test until the promise is resolved
+    // other way to achieve this is with the done keyword
+    return swapi.getPeople(fetch).then(data => {
+      expect(data.count).toEqual(87);
+    })
+  })
+
+```
+
+Example below by using the done keyword in Jest allows you to control when the test is complete as opposed to returning the promise like above:
+
+
+![Jest Done Keyword Example](src/donejestkeyword.jpg)
+
+expect.assertions(2)
+
+This checks that two assertions to complete for async functions this is very useful to make sure all async functions is complete.
+
+[Jest Cheat Sheet](https://github.com/sapegin/jest-cheat-sheet)
+
+
+Mocks,Spies,Stubs
+
+Mocks in unit tests are simulated objects that mimic the behavior of real dependencies. They help isolate the code being tested, ensuring reliable and repeatable tests. By controlling the input and mocking the output, developers can verify the functionality of a specific unit without relying on the actual implementation of its dependencies.
+
+```
+
+it('getPeople returns count and results', () => {
+  mockFetch = jest.fn().mockReturnValue(Promise.resolve({
+    json: () => Promise.resolve({
+        count: 87,
+        results: [0,1,2,3,4,5]
+    })
+  }))
+
+  expect.assertions(4)
+  return swapi.getPeoplePromise(mockFetch).then(data => {
+    expect(mockFetch.mock.calls.length).toBe(1);
+    expect(mockFetch).toBeCalledWith('http://swapi.py4e.com/api/people');
+    expect(data.count).toEqual(87);
+    expect(data.results.length).toBeGreaterThan(5);
+  })
+  // done() 
+})
+
+```
+
+The MockFetch method is simulating a async API call elimination the unit test from becoming an expensive call on the server and in the unit test enviroment.
+
+
+##### Enzyme Testing Library
+
+Enzyme is a JavaScript Testing utility for React that makes it easier to test your React Components' output. You can also manipulate, traverse, and in some ways simulate runtime given the output.
+
+Enzyme's API is meant to be intuitive and flexible by mimicking jQuery's API for DOM manipulation and traversal.
+
+[Enzyme's Github Repo(https://github.com/enzymejs/enzyme)]
+
+
+NB NB !
+IN THE NEXT VIDEOS YOU WILL HAVE TO USE REACT v18 
+
+This is because currently Enzyme needs something called an ADAPTER to work with the latest version of React. 
+
+Therefore, to avoid any issues, please clone my repo. This repo also includes the below change from what you will see in the next video
+
+```
+
+import { configure } from 'enzyme';
+// import Adapter from 'enzyme-adapter-react-16'; only use for React 16
+// import Adapter from '@wojtekmaj/enzyme-adapter-react-17'; only use for React 17
+import Adapter from '@cfaester/enzyme-adapter-react-18';
+ 
+ 
+configure({ adapter: new Adapter() });
+
+```
+
+
+1. Make sure the correct adapter is installed as dev dependancy based on your React Version
+
+
+
+"@cfaester/enzyme-adapter-react-18": "^0.6.0"
+
+
+
+2. Create SetupTests 
+
+  ```
+  import Enzyme from 'enzyme';
+  import Adapter from 'enzyme-adapter-react-16';
+
+  Enzyme.configure({ adapter: new Adapter() });
+  
+  ```
+
+  When you run a shallow test run it does do a deep component test.
+
+  ```
+  // also remember to import react to use the Card Component import React from 'react'; and the card
+  it('renders without crashing', () => {
+  expect(shallow(<Card/>)).toMatchSnapshot();
+  });
+  
+  ```
+
+  The Test Above will do a shallow test on the component any components within this will not be tested
+  ie reason for calling it shallow test:
+
+  ```
+  const Card = ({ name, email, id }) => {
+  return (
+    <div className='tc grow bg-light-green br3 pa3 ma2 dib bw2 shadow-5'>
+      <img alt='robots' src={`https://robohash.org/${id}?size=200x200`} />
+      <div>
+        <h2>{name}</h2>
+        <p>{email}</p>
+      </div>
+    </div>
+  );
+}
+  
+
+
+  Now in the scenario where an component existed:
+
+  
+  
+
+    const Card = ({ name, email, id }) => {
+    return (
+    <div className='tc grow bg-light-green br3 pa3 ma2 dib bw2 shadow-5'>
+      <img alt='robots' src={`https://robohash.org/${id}?size=200x200`} />
+      <div>
+        <h2>{name}</h2>
+        <p>{email}</p>
+      </div>
+      </CustomComponent>
+    </div>
+    );
+    }
+  
+  
+
+The unit test would not test this </CustomComponent> as its a shallow test.
+
+
+
+There is also the mount method from Enzyne however this is not always used and it can be used to mount components in the DOM or in JSDOM so it can become expensive very quickly.
+
+In order to see more documentation on the three main methods of Enzyne
+
+[Enzyne Main Methods(https://enzymejs.github.io/enzyme/docs/api/)]
+
+HEADS UP! Depending on your version of Jest, in the next video, you may find that your snapshots aren't created properly (empty). This is a known issue with Jest and may require you to do the following: https://stackoverflow.com/questions/54419342/jest-enzyme-shallowwrapper-is-empty-when-creating-snapshot. I have included the code change mentioned in the article in this git repo to show you how to do this if you encounter the issue.
+
+Enzyne Allows to render components in a test enviroment
+
+```
+import React from 'react';
+import { shallow } from 'enzyme';
+import Card from './Card';
+
+it('renders without crashing', () => {
+  expect(shallow(<Card/>)).toMatchSnapshot();
+});
+
+```
+
+When this test runs above it take a snapshot of the component so if any changes are made to the component the test will fail.
+
+If you make changes you would also need to run the test npm test and run the u command to update snapshot
+
+If you wanna see the test coverage in a test suite you can run the following command:
+
+```
+
+npm test -- --coverage
+
+```
+
+In order to mock data for components that use the map method you need to mock some data for the map method to execute.
+
+![Mock Robots Array](src/mockRobotsArrayTest.jpg)
+
+
+Testing Components that have state in them and with click events:
+
+![Checking State](src/simulateClickandCheckingState.jpg)
+
+In order to access props:
+
+
+![AccessProps ](src/AccessProps.jpg)
+
+Always push your snapshots folder to the github to make sure that when the repo is cloned it has the snapshots on how the components should render
+
+
+# JEST comes built in with Create React APP through react scripts
+
+You might need to install separatly when using Vite build tool
+
+
+When working with components that are chained to others like app component that requires a store you can install a redux-mock-store
+
+
+![Redux Mock Store](src/ReduxMockStore.jpg)
+
+
+A way to make tests for complex components:
+
+![Redux Mock Store](src/AppMadeSimpleForTests.jpg)
+
+
+### Instead of trying test complex components I might need to simply the component which results in better code
+
+
+you can run some tests before anything else:
+
+![BeforeEach](src/beforeEach.jpg)
+
+Access to the wrapper component instance and its functions:
+
+![Access Instance](src/accessinstanceinjest.jpg)
+
+
+## React Testing Library
+
+Main Libraries used in react testing library
+
+ "@testing-library/jest-dom": "5.16.1",
+ "@testing-library/react": "12.1.2",
+ "@testing-library/user-event": "13.5.0",
+
+ GetbyText takes a string regex:
+
+ ![Access Instance](src/regexparam.jpg)
+
+ Using the Wrapper for the mock redux store in utils.test.js
+
+ [Here is more info on wrapper(https://testing-library.com/docs/react-testing-library/api/#wrapper)]
+
+ screen.queryByText Returns nothing however screen.getbytext when nothing found it throws an error
+
+ Need to rewrite the following into this crwn clothing app
+
+
+
+
+ # TODO Mock Jest use Dispatch causing reference error
+
+ ```
+ 
+ test('It should dispatch signOutStart action when clicking on the Sign Out link', async () => {
+        const mockDispatch = jest.fn();
+        jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockDispatch);
+    
+        renderWithProviders(<NavigationBar />, {
+          preloadedState: {
+            user: {
+              currentUser: {},
+            },
+          },
+        });
+    
+        expect(screen.getByText('SIGN OUT')).toBeInTheDocument();
+    
+        await fireEvent.click(screen.getByText('SIGN OUT'));
+    
+        expect(mockDispatch).toHaveBeenCalled();
+        expect(mockDispatch).toHaveBeenCalledWith(signOutStart());
+    
+        mockDispatch.mockClear();
+      });
+ 
+ ```
+
+ ## Project Directory Debug for tests and app debug setup
+
+ ![Project Directory](src/ProjectDirectory.jpg)
+
+ and this is the launch.json setup to debug your tests:
+
+ ![Launch JSON](src/launchConfig.jpg)
+
+ ```
+ 
+ // When checking if item is present use querybytext
+ expect(screen.queryByText('SIGN IN')).toBeNull();
+ 
+ ```
+
+
+
+ # Gatsby Stuff
+
+ https://github.com/ZhangMYihua/gatsby-blog-netlify/blob/master/src/pages/index.js
+
+ https://github.com/ZhangMYihua/gatsby-blog-netlify/blob/master/gatsby-node.js
+
+ then 322 lecture 08:00 update graph ql
+
+ when using graphql in node js remember when making graphql calls in node js you must use this syntax becuase you dont get es6 features right out the box 
+
+ ```
+ // () for bare node js
+ graphql(``)
+ 
+ ```
+
+ 323 graphql 04:02
+
+ 324 graphql 02:00
+
+ https://github.com/ZhangMYihua/gatsby-blog-netlify/blob/master/src/templates/blog-post.js
+
+
+ # Open Source
+
+ https://github.com/zero-to-mastery/start-here-guidelines
+
+ https://github.com/zero-to-mastery
+
+ Complete 
+
+ https://www.udemy.com/course/complete-react-developer-zero-to-mastery/learn/lecture/16544016#notes
+
+
+
+
+
+# WebPack + Babel
+
+## What is Webpack?
+
+Webpack is a powerful and widely-used open-source JavaScript module bundler that plays a crucial role in modern web development. Its primary function is to package and bundle various web assets, such as JavaScript, CSS, and images, making them ready for deployment on the web. By efficiently processing and optimizing these assets, Webpack helps improve a web application's performance and loading times.
+
+One of Webpack's key features is its ability to create a dependency graph for the assets it processes. This graph allows Webpack to understand the relationships between different files, ensuring that they are bundled together in a way that minimizes duplication and maximizes efficiency. This also enables developers to employ a modular approach when building their applications, enhancing code organization and maintainability.
+
+To achieve its bundling capabilities, Webpack utilizes loaders and plugins. Loaders are responsible for transforming specific types of files (e.g., transpiling modern JavaScript to older versions or converting SCSS to CSS) so that they can be included in the final bundle. Plugins, on the other hand, provide additional optimizations, such as minification, chunk splitting, or injecting environment variables.
+
+Code splitting is another essential feature of Webpack. It allows developers to split their application's code into smaller chunks, which can be loaded on-demand when required. This helps reduce the initial loading time of the application and enhances the user experience, especially for large-scale projects.
+
+In summary, Webpack simplifies the process of bundling web assets, optimizing their performance, and improving code organization for web developers. By leveraging its capabilities, developers can create faster, more efficient, and maintainable web applications.
+
+## What is Babel?
+
+Babel is a popular open-source JavaScript compiler used to transform modern ECMAScript (ES6+) code into backward-compatible versions that can run in older browsers and environments. As new JavaScript features are introduced, not all browsers support them immediately. Babel bridges this gap by converting the latest JavaScript syntax and features into older versions that are widely supported.
+
+Developers can use Babel as part of their build process to ensure that their code is compatible with a broader range of browsers and environments, providing a more consistent experience for users. It also enables developers to take advantage of the latest language features and syntax while not worrying about compatibility issues.
+
+Babel is highly configurable and extensible, allowing developers to customize the transformation process based on their project's specific needs. It has become an essential tool in modern web development, facilitating the adoption of new JavaScript language features without sacrificing compatibility with older browsers.
+
+
+Create React App 
+
+Hides alot of these boilerplate configuratios away from the developer.
+
+
+
+Example:
+
+
+1. Clone this repo: [Webpack Intro](https://github.com/ZhangMYihua/webpack-from-scratch)
+
+2. Install webpack and webpack-cli
+
+```
+
+npm install webpack webpack-cli --save-dev
+
+```
+
+3. Add web pack config file to project: webpack.config.js
+
+4. Update package.json 
+
+```
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --open --mode development"
+  },
+
+```
+
+5. Update webpack.config.js
+
+  When working with this file we only have access to the ES5 syntax so to export use the follwing syntax:
+
+  ```
+  module.exports = { TODO 314 6 minutes in explains the rules loaders etc
+
+  }
+  
+  ```
+
+  Match the online repo [Online Webpack Config](https://github.com/ZhangMYihua/webpack-final/blob/master/webpack.config.js)
+
+
+  6. Install babel libraries:
+
+
+  ```
+  
+  npm install  @babel/core @babel/preset-env @babel/preset-react babel-loader --save-dev
+  
+  ```
+
+  - @babel/preset-env - This library comes with transpiling javascript from ES6 down to ES5
+
+  - @babel/preset-react There is other presets that can convert other frameworks and libraries like angular vue aurora and many others
+
+  - babel-loader is for webpack
+
+  7. Add the babel-rc file and rewrite from the online [Repo](https://github.com/ZhangMYihua/webpack-final/blob/master/.babelrc)
+
+    This will convert our javascript to another version our browser will understand:
+
+
+    ```
+    {
+      "presets": ["@babel/preset-env", "@babel/preset-react"]
+    }
+    
+    ```
+
+  8. Add the ability to transpile css with the loaders
+
+  ```
+    npm install style-loader css-loader
+  
+  ```
+
+The use claus in the statement below the loaders evauluate right to left
+
+  ```
+   {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+  }
+  
+
+  ```
+
+9. Add the HTML loader and the html-plugin
+
+  ```
+  
+  npm install html-loader html-webpack-plugin
+
+  ```
+
+  Babel loader looks for index.html and index.js and loads the app from there as an Entry Point
+
+
+Links:
+
+[Webpack Concepts Documentation](https://webpack.js.org/concepts/)
+
+[What is Regex?](https://www.regexbuddy.com/regex.html)
+
+[Babel Usage](https://babeljs.io/docs/usage)
+
+[Babel Loader](https://github.com/babel/babel-loader)
+
+[Webpack StyleLoader](https://github.com/webpack-contrib/style-loader#style-loader)
+
+[Webpack CSS Loader](https://github.com/webpack-contrib/css-loader#css-loader)
+
+[Webpack HTML plugin](https://webpack.js.org/plugins/html-webpack-plugin/#installation)
+
+
+
+
+# Key Developer Concepts
+
+Some Basic Javascript concepts to learn before
+
+## Javascript Array Methods:
+
+1. map():
+
+In JavaScript, the map() method is a higher-order array method that allows you to iterate over each element of an array and apply a function to transform or modify each element. It returns a new array containing the results of applying the provided function to each element of the original array.
+
+The syntax for the map() method is as follows:
+
+```
+
+const newArray = array.map((currentValue, index, array) => {
+  // Function to apply on each element
+  // The return value will be added to the new array
+});
+
+
+```
+
+2. filter() 
+
+In JavaScript, the filter() method is another higher-order array method that allows you to iterate over an array and create a new array containing only the elements that pass a certain condition specified by a provided function. In other words, it filters out elements from the original array based on the given criteria.
+
+The syntax for the filter() method is as follows:
+
+```
+
+const newArray = array.filter((currentValue, index, array) => {
+  // Function that returns true or false based on a condition
+  // If true, the element will be included in the new array
+});
+
+
+```
+
+Parameters:
+
+currentValue: The current element being processed in the array.
+
+index (optional): The index of the current element being processed.
+
+array (optional): The original array that filter() was called upon.
+
+
+3. find()
+
+In JavaScript, the find() method is another higher-order array method that is used to search for a single element in an array based on a provided condition. It returns the first element in the array that satisfies the condition specified by the given function.
+
+The syntax for the find() method is as follows:
+
+```
+
+const foundElement = array.find((currentValue, index, array) => {
+  // Function that defines the condition to search for an element
+  // If true, the element will be returned and the iteration stops
+});
+
+
+```
+
+
+4. includes()
+
+In JavaScript, the includes() method is a built-in function for arrays and strings that checks if a specified element or substring is present in the array or string. It returns a Boolean value indicating whether the element or substring exists within the given array or string.
+
+For arrays:
+
+```
+
+array.includes(searchElement[, fromIndex])
+
+```
+
+Parameters:
+
+searchElement: The element to search for in the array.
+fromIndex (optional): The index at which to start searching. If omitted, the search starts from the beginning of the array. If the fromIndex is negative, it is treated as array.length + fromIndex, meaning the search will start from the end of the array.
+
+```
+
+string.includes(searchString[, position])
+
+
+```
+
+For strings:
+
+```
+
+string.includes(searchString[, position])
+
+```
+
+Parameters:
+
+searchString: The substring to search for in the string.
+position (optional): The position (index) in the string where the search will start. If omitted, the search starts from the beginning of the string.
+The includes() method returns true if the search element or substring is found and false if it is not found.
+
+
+It works well on primitive types but for object types you cant do direct comparison
+
+Here is example when it's points to differant locations in javascript memory bank:
+
+![Example with pointers](src/prmitiveTypes.jpg)
+
+If its not a primitive its an object it will be placed in a reference.
+
+Example of object pointers in javascript 
+
+![Ex Pointers](src/includesWithobj.jpg)
+
+## Promises - Javascript Async Await
+
+Introduced in ES6
+
+ES7 Async Await
+
+It was created to prevent callback hell:
+
+
+Callback hell, also known as "pyramid of doom," is a situation that arises in asynchronous JavaScript code when multiple nested callbacks are used to handle asynchronous operations. This can lead to deeply nested and hard-to-read code, making it difficult to maintain and debug. Here's an example of callback hell:
+
+```
+
+asyncOperation1(function (result1) {
+  // Handle result1
+  asyncOperation2(function (result2) {
+    // Handle result2
+    asyncOperation3(function (result3) {
+      // Handle result3
+      asyncOperation4(function (result4) {
+        // Handle result4
+        asyncOperation5(function (result5) {
+          // Handle result5
+          // More nested callbacks...
+        });
+      });
+    });
+  });
+});
+
+
+```
+
+Promises are a core feature in modern JavaScript for handling asynchronous operations. They represent a placeholder for a value that may not be available immediately. A Promise can be in one of three states: pending, fulfilled, or rejected. When an asynchronous operation completes, a Promise is resolved with the result or rejected with an error. Promises allow developers to write more structured and readable asynchronous code by chaining .then() for success and .catch() for error handling. Additionally, Promises can be combined using methods like Promise.all() and Promise.race(), enabling concurrent and efficient handling of multiple asynchronous tasks.
+
+
+![Project Directory](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/promises.png)
+
+
+implementation Example:
+
+
+```
+
+function getRandomNumber() {
+  return new Promise((resolve, reject) => {
+    // Simulate a delay of 1 second
+    setTimeout(() => {
+      const randomNumber = Math.floor(Math.random() * 10) + 1;
+      if (randomNumber <= 5) {
+        resolve(randomNumber); // Resolve the Promise with the random number
+      } else {
+        reject("Error: Random number is greater than 5"); // Reject the Promise with an error
+      }
+    }, 1000);
+  });
+}
+
+
+```
+
+
+Consuming the Promise:
+
+```
+
+getRandomNumber()
+  .then((number) => {
+    console.log("Random number:", number);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+
+```
+
+
+# Async Await 
+
+async/await is a modern feature introduced in ECMAScript 2017 (ES8) that simplifies working with asynchronous operations in JavaScript. It provides a more readable and sequential syntax for handling Promises.
+
+async Function:
+
+To use await, you need to define an async function. An async function always returns a Promise, and its return value is wrapped in a resolved Promise. Within an async function, you can use the await keyword to pause the execution until a Promise is resolved.
+
+```
+
+async function fetchData() {
+  // Asynchronous operations using await
+  const data = await fetch('https://api.example.com/data');
+  return data.json();
+}
+await Keyword:
+The await keyword can only be used inside an async function. It pauses the execution of the function until the Promise it awaits is resolved. If the Promise is rejected, it will throw an error that you can catch using a try/catch block.
+javascript
+Copy code
+async function getData() {
+  try {
+    const result = await fetchData(); // Wait until fetchData Promise is resolved
+    console.log(result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+
+```
+
+Using async/await simplifies the syntax when dealing with asynchronous code, making it easier to read and maintain. It effectively avoids the "callback hell" problem and allows you to write asynchronous code in a more synchronous style, which can greatly enhance code clarity and organization. However, it's important to remember that async/await is not a replacement for Promises but rather a syntactic improvement over using traditional Promise chains or nested callbacks. Under the hood, async/await still relies on Promises to handle asynchronous operations.
+
+
+
+
+# Caching Memoization
+
+
+Caching and memoization are two techniques used in programming to optimize the performance of functions that are computationally expensive or frequently called with the same input values. They help reduce redundant calculations and speed up the execution of functions.
+
+Caching:
+
+Caching involves storing the results of expensive function calls and reusing those results when the same inputs occur again. The cache is typically implemented using data structures like objects, maps, or arrays. By caching the results, subsequent calls with the same inputs can be quickly retrieved from the cache instead of recomputing the function.
+
+
+```
+const cache = {};
+
+function expensiveCalculation(input) {
+  if (input in cache) {
+    return cache[input];
+  } else {
+    const result = /* perform expensive calculation */;
+    cache[input] = result;
+    return result;
+  }
+}
+
+
+
+```
+
+
+Memoization:
+
+Memoization is a specific form of caching where the results of function calls are stored in memory based on the function's input parameters. It is typically applied to functions that have deterministic behavior, meaning they produce the same output for the same input every time.
+Memoization is often implemented using closures in JavaScript. It works by creating a higher-order function that takes the original function as an argument and returns a new function that caches the results of the original function.
+
+
+```
+
+function memoize(func) {
+  const cache = {};
+  return function (input) {
+    if (input in cache) {
+      return cache[input];
+    } else {
+      const result = func(input);
+      cache[input] = result;
+      return result;
+    }
+  };
+}
+
+const expensiveCalculationMemoized = memoize(function (input) {
+  return /* perform expensive calculation */;
+});
+
+
+```
+
+
+Memoization can significantly improve the performance of certain functions, especially when they are called with repetitive inputs. It helps avoid redundant computations and can be especially useful in recursive functions or dynamic programming algorithms.
+
+Both caching and memoization are valuable techniques for optimizing code performance and should be used judiciously based on the specific use case and requirements of the function being optimized.
+
+
+# Currying
+
+Currying is a functional programming technique in which a function that takes multiple arguments is transformed into a series of functions, each taking a single argument. The curried function allows you to pass arguments one by one, and it returns a new function after each argument is passed until all the arguments are supplied, and the final result is produced.
+
+In JavaScript, you can implement currying using closures or function returning techniques. Here's a simple example of a curried function:
+
+```
+function add(a) {
+  return function (b) {
+    return a + b;
+  };
+}
+
+const add5 = add(5); // This returns a function that adds 5 to its argument
+
+console.log(add5(3)); // Output: 8 (5 + 3)
+console.log(add5(7)); // Output: 12 (5 + 7)
+
+```
+
+In this example, the add function takes the first argument a and returns a new function that takes the second argument b. The returned function has access to the a value due to the closure, enabling it to perform the addition.
+
+Currying can make functions more flexible and reusable, allowing you to partially apply arguments and create specialized versions of the original function. It also plays a significant role in functional composition and function chaining, which are common practices in functional programming paradigms.
+
+
+![Currying Example](src/currying.jpg)
+
+# ES6 Classes
+
+ES6 (ECMAScript 2015) introduced the concept of classes in JavaScript, providing a more structured and object-oriented approach to defining constructor functions and creating objects. ES6 classes are syntactic sugar over JavaScript's existing prototype-based inheritance model.
+
+Here's an example of defining and using a class in ES6:
+
+```
+
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayHello() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+// Creating objects from the class
+const person1 = new Person("John", 30);
+const person2 = new Person("Alice", 25);
+
+person1.sayHello(); // Output: Hello, my name is John and I am 30 years old.
+person2.sayHello(); // Output: Hello, my name is Alice and I am 25 years old.
+
+
+```
+
+Key features of ES6 classes:
+
+constructor: The constructor method is called when a new object is created from the class and allows you to initialize object properties.
+
+Methods: You can define methods directly within the class, and they are automatically added to the class prototype.
+
+Inheritance: ES6 classes support inheritance using the extends keyword. You can create a subclass that inherits properties and methods from a parent class.
+
+```
+
+class Student extends Person {
+  constructor(name, age, grade) {
+    super(name, age); // Call the parent class constructor using super()
+    this.grade = grade;
+  }
+
+  displayGrade() {
+    console.log(`I am in grade ${this.grade}.`);
+  }
+}
+
+const student1 = new Student("Bob", 15, 9);
+student1.sayHello(); // Output: Hello, my name is Bob and I am 15 years old.
+student1.displayGrade(); // Output: I am in grade 9.
+
+```
+
+ES6 classes provide a more intuitive syntax for working with objects and inheritance, making it easier to create and manage complex object-oriented code in JavaScript.
+
+We can also use the instanceof in javascript to see if an object is of specific type.
+
+This is all syntactic sugar it still transpiles to normal javascript like new keyword gets transpiled to the prototype 
+
+
+![Currying Example](src/oopNoReason.jpg)
+
+hence the reason for prototypical inheritance
+
+in order to inherit in javascript:
+
+```
+
+class dog extends Animal
+
+```
+
+In order to call anything on the parent you can use the `super` keyword
 
 
 
